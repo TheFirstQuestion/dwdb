@@ -83,3 +83,20 @@ CREATE TABLE episode_type_links (
   episode_type_id INTEGER NOT NULL REFERENCES episode_types(id),
   PRIMARY KEY (episode_id, episode_type_id)
 );
+
+-- TVDB
+CREATE TABLE tvdb_series (
+  id    INTEGER PRIMARY KEY,  -- TVDB's seriesId, e.g. 76107
+  name  TEXT NOT NULL
+);
+
+CREATE TABLE tvdb_mappings (
+  id                   SERIAL PRIMARY KEY,
+  episode_id           INTEGER NOT NULL REFERENCES episodes(id),
+  tvdb_series_id       INTEGER NOT NULL REFERENCES tvdb_series(id),
+  tvdb_episode_id      INTEGER NOT NULL UNIQUE,  -- TVDB's stable episode id
+  tvdb_season_number   INTEGER NOT NULL,
+  tvdb_episode_number  INTEGER NOT NULL,
+  tvdb_absolute_number INTEGER,
+  UNIQUE (tvdb_series_id, tvdb_season_number, tvdb_episode_number)
+);
