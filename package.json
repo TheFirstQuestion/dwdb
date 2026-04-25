@@ -12,9 +12,9 @@
     "migrate:down": "dotenv -e .env -- node-pg-migrate down --migrations-dir migrations"
   },
   "dependencies": {
-    "@fastify/swagger": "^8.15.0",
-    "@fastify/swagger-ui": "^4.0.0",
-    "fastify": "^4.28.0",
+    "@fastify/swagger": "^9.7.0",
+    "@fastify/swagger-ui": "^5.2.6",
+    "fastify": "^5.8.5",
     "fastify-plugin": "^5.1.0",
     "postgres": "^3.4.4"
   },
@@ -27,7 +27,7 @@
     "@sinclair/typebox": "^0.33.0",
     "@types/node": "^20.0.0",
     "dotenv-cli": "^8.0.0",
-    "node-pg-migrate": "^7.7.0",
+    "node-pg-migrate": "^8.0.4",
     "tsx": "^4.19.0",
     "typescript": "^5.4.0"
   }
