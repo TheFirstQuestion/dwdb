@@ -6,7 +6,8 @@
 
 
 ########################### Project-specific ###########################
-wiki-data/
+wiki-data/pages/*.json
+!wiki-data/pages/List_of_Doctor_Who_television_stories.json
 
 ########################### Common Credential Filenames ###########################
 token.json

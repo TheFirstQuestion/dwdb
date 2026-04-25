@@ -11,7 +11,11 @@
     "migrate:up": "dotenv -e .env -- node-pg-migrate up --migrations-dir migrations",
     "migrate:down": "dotenv -e .env -- node-pg-migrate down --migrations-dir migrations",
     "wiki:download": "tsx scripts/download-wiki.ts",
-    "wiki:download:test": "MAX_PAGES=50 tsx scripts/download-wiki.ts"
+    "wiki:download:test": "MAX_PAGES=50 tsx scripts/download-wiki.ts",
+    "seed:eras": "dotenv -e .env -- tsx seeds/seed-eras.ts",
+    "test": "vitest run",
+    "lint": "eslint src/ seeds/ scripts/ tests/",
+    "format": "prettier --write src/ seeds/ scripts/ tests/"
   },
   "dependencies": {
     "@fastify/swagger": "^9.7.0",
@@ -30,8 +34,13 @@
   "devDependencies": {
     "@types/node": "^20.0.0",
     "dotenv-cli": "^8.0.0",
+    "eslint": "^10.2.1",
+    "eslint-config-prettier": "^10.1.8",
     "node-pg-migrate": "^8.0.4",
+    "prettier": "^3.8.3",
     "tsx": "^4.19.0",
-    "typescript": "^5.4.0"
+    "typescript": "^5.4.0",
+    "typescript-eslint": "^8.59.0",
+    "vitest": "^3.2.4"
   }
 }

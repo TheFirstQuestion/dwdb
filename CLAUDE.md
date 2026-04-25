@@ -11,6 +11,7 @@ Doctor Who episode database API.
 ## Rules
 - No TypeScript non-null assertions (`!`). Throw an explicit error or handle the missing value properly.
 - All TypeBox schemas (params, body, response, 404s) must be defined in the module's schema file and imported into routes — no inline `Type.Object({...})` in route handlers.
+- Before committing: code must lint cleanly (`pnpm lint`), be formatted (`pnpm format`), and all tests must pass (`pnpm test`).
 
 ## Data conventions
 - `doctor_id` on an episode refers to the Doctor's incarnation at the **start** of the episode. Regeneration episodes belong to the outgoing Doctor (e.g. "The Tenth Planet" → First Doctor, "End of Time" → Tenth Doctor).
