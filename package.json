@@ -15,7 +15,8 @@
     "seed:eras": "dotenv -e .env -- tsx seeds/seed-eras.ts",
     "test": "vitest run",
     "lint": "eslint src/ seeds/ scripts/ tests/",
-    "format": "prettier --write src/ seeds/ scripts/ tests/"
+    "format": "prettier --write src/ seeds/ scripts/ tests/",
+    "prepare": "husky"
   },
   "dependencies": {
     "@fastify/swagger": "^9.7.0",
@@ -36,6 +37,7 @@
     "dotenv-cli": "^8.0.0",
     "eslint": "^10.2.1",
     "eslint-config-prettier": "^10.1.8",
+    "husky": "^9.1.7",
     "node-pg-migrate": "^8.0.4",
     "prettier": "^3.8.3",
     "tsx": "^4.19.0",
