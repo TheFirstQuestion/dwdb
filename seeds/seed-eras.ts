@@ -31,7 +31,7 @@ async function main() {
 	console.log("Parsed eras:");
 	for (const era of eras) {
 		console.log(
-			`  ${era.doctorNumber}. ${era.actor} (${era.startYear}–${era.endYear ?? "present"})`
+			`  ${era.id}. ${era.actor} (${era.start_year}–${era.end_year ?? "present"})`
 		);
 	}
 
@@ -52,14 +52,14 @@ async function main() {
 
 				await tx`
           INSERT INTO eras (id, actor_id, start_year, end_year)
-          VALUES (${era.doctorNumber}, ${personId}, ${era.startYear}, ${era.endYear})
+          VALUES (${era.id}, ${personId}, ${era.start_year}, ${era.end_year})
           ON CONFLICT (id) DO UPDATE
             SET actor_id = EXCLUDED.actor_id,
                 start_year = EXCLUDED.start_year,
                 end_year = EXCLUDED.end_year
         `;
 
-				console.log(`  Inserted era ${era.doctorNumber}: ${era.actor}`);
+				console.log(`  Inserted era ${era.id}: ${era.actor}`);
 			}
 		});
 

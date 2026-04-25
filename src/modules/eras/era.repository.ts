@@ -1,12 +1,6 @@
 import type postgres from "postgres";
 import { BaseRepository } from "../../basic/BaseRepository.js";
-
-export interface EraRow {
-	id: number;
-	actor: string;
-	start_year: number;
-	end_year: number | null;
-}
+import { type EraRow } from "./era.schema.js";
 
 export class EraRepository extends BaseRepository<EraRow> {
 	constructor(db: postgres.Sql) {

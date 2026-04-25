@@ -1,27 +1,5 @@
-export interface EraData {
-	doctorNumber: number;
-	actor: string;
-	startYear: number;
-	endYear: number | null;
-}
-
-const DOCTOR_NUMBER: Record<string, number> = {
-	First: 1,
-	Second: 2,
-	Third: 3,
-	Fourth: 4,
-	Fifth: 5,
-	Sixth: 6,
-	Seventh: 7,
-	Eighth: 8,
-	Ninth: 9,
-	Tenth: 10,
-	Eleventh: 11,
-	Twelfth: 12,
-	Thirteenth: 13,
-	Fourteenth: 14,
-	Fifteenth: 15,
-};
+import { ordinalWordToNumber } from "./constants.js";
+import { type EraRow } from "../src/modules/eras/era.schema.js";
 
 export function extractYears(text: string): number[] {
 	const years: number[] = [];
@@ -38,8 +16,8 @@ export function extractActor(text: string): string | null {
 	return m ? m[1] : null;
 }
 
-export function parseEras(wikitext: string): EraData[] {
-	const eras: EraData[] = [];
+export function parseEras(wikitext: string): EraRow[] {
+	const eras: EraRow[] = [];
 	const sections = wikitext.split(/(?=^== .+ Doctor.* ==)/m);
 
 	for (const section of sections) {
@@ -47,7 +25,7 @@ export function parseEras(wikitext: string): EraData[] {
 		if (!headingMatch) continue;
 
 		const doctorName = headingMatch[1];
-		const doctorNumber = DOCTOR_NUMBER[doctorName];
+		const doctorNumber = ordinalWordToNumber(doctorName);
 		if (!doctorNumber) continue;
 
 		let introLine: string | null = null;
@@ -85,10 +63,10 @@ export function parseEras(wikitext: string): EraData[] {
 			/ from \[\[/.test(introLine) && !/ to \[\[/.test(introLine);
 
 		eras.push({
-			doctorNumber,
+			id: doctorNumber,
 			actor,
-			startYear: years[0],
-			endYear: isOngoing ? null : years[years.length - 1],
+			start_year: years[0],
+			end_year: isOngoing ? null : years[years.length - 1],
 		});
 	}
 

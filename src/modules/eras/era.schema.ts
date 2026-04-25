@@ -1,4 +1,4 @@
-import { Type } from "@sinclair/typebox";
+import { Type, type Static } from "@sinclair/typebox";
 
 export const Era = Type.Object({
 	id: Type.Integer({
@@ -23,6 +23,8 @@ export const Era = Type.Object({
 		}
 	),
 });
+
+export type EraRow = Static<typeof Era>;
 
 export const EraIdParam = Type.Object({
 	id: Type.Integer({ minimum: 1, description: "Doctor number" }),

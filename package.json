@@ -13,6 +13,7 @@
     "wiki:download": "tsx scripts/download-wiki.ts",
     "wiki:download:test": "MAX_PAGES=50 tsx scripts/download-wiki.ts",
     "seed:eras": "dotenv -e .env -- tsx seeds/seed-eras.ts",
+    "seed:seasons": "dotenv -e .env -- tsx seeds/seed-seasons.ts",
     "test": "vitest run",
     "lint": "eslint src/ seeds/ scripts/ tests/",
     "format": "prettier --write src/ seeds/ scripts/ tests/",

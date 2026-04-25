@@ -1,26 +1,8 @@
 import { describe, it, expect } from "vitest";
-import { readFileSync } from "fs";
-import { join, dirname } from "path";
-import { fileURLToPath } from "url";
 import { extractYears, extractActor, parseEras } from "../seeds/era-parser.js";
+import { loadWikitext } from "./helpers.js";
 
-const WIKI_PAGE = join(
-	dirname(fileURLToPath(import.meta.url)),
-	"..",
-	"wiki-data",
-	"pages",
-	"List_of_Doctor_Who_television_stories.json"
-);
-
-const raw = JSON.parse(readFileSync(WIKI_PAGE, "utf-8"));
-const wikitext = Object.values(raw.query.pages as Record<string, unknown>).map(
-	(p: unknown) => {
-		const page = p as {
-			revisions: Array<{ slots: { main: { "*": string } } }>;
-		};
-		return page.revisions[0].slots.main["*"];
-	}
-)[0];
+const wikitext = loadWikitext();
 
 describe("extractYears", () => {
 	it("extracts a single year", () => {
@@ -68,50 +50,50 @@ describe("parseEras", () => {
 	const eras = parseEras(wikitext);
 
 	it("parses First Doctor correctly", () => {
-		const era = eras.find((e) => e.doctorNumber === 1);
+		const era = eras.find((e) => e.id === 1);
 		expect(era).toMatchObject({
-			doctorNumber: 1,
+			id: 1,
 			actor: "William Hartnell",
-			startYear: 1963,
-			endYear: 1966,
+			start_year: 1963,
+			end_year: 1966,
 		});
 	});
 
 	it("parses Ninth Doctor as Eccleston, not Rowan Atkinson", () => {
-		const era = eras.find((e) => e.doctorNumber === 9);
+		const era = eras.find((e) => e.id === 9);
 		expect(era).toMatchObject({
-			doctorNumber: 9,
+			id: 9,
 			actor: "Christopher Eccleston",
-			startYear: 2005,
-			endYear: 2005,
+			start_year: 2005,
+			end_year: 2005,
 		});
 	});
 
 	it("parses Seventh Doctor end year as 1996 (TV Movie appearance)", () => {
-		const era = eras.find((e) => e.doctorNumber === 7);
+		const era = eras.find((e) => e.id === 7);
 		expect(era).toMatchObject({
-			doctorNumber: 7,
+			id: 7,
 			actor: "Sylvester McCoy",
-			startYear: 1987,
-			endYear: 1996,
+			start_year: 1987,
+			end_year: 1996,
 		});
 	});
 
 	it("parses Tenth Doctor correctly", () => {
-		const era = eras.find((e) => e.doctorNumber === 10);
+		const era = eras.find((e) => e.id === 10);
 		expect(era).toMatchObject({
-			doctorNumber: 10,
+			id: 10,
 			actor: "David Tennant",
-			startYear: 2005,
+			start_year: 2005,
 		});
 	});
 
 	it("parses Fourteenth Doctor as David Tennant", () => {
-		const era = eras.find((e) => e.doctorNumber === 14);
+		const era = eras.find((e) => e.id === 14);
 		expect(era).toMatchObject({
-			doctorNumber: 14,
+			id: 14,
 			actor: "David Tennant",
-			startYear: 2022,
+			start_year: 2022,
 		});
 	});
 });
