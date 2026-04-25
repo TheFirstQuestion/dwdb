@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm --version)",
+      "Bash(docker compose *)",
+      "Bash(pnpm migrate:up)",
+      "Bash(pnpm dev *)",
+      "Bash(curl -s http://localhost:3000/health)",
+      "Bash(curl -s http://localhost:3000/docs/json)",
+      "Bash(pnpm audit *)",
+      "Bash(pnpm add *)"
+    ]
+  }
+}
