@@ -3,6 +3,7 @@ import { TypeBoxTypeProvider } from "@fastify/type-provider-typebox";
 import dbPlugin from "./plugins/db.js";
 import swaggerPlugin from "./plugins/swagger.js";
 import erasRoutes from "./modules/eras/era.routes.js";
+import seasonsRoutes from "./modules/seasons/season.routes.js";
 
 const fastify = Fastify({
 	logger: true,
@@ -11,6 +12,7 @@ const fastify = Fastify({
 await fastify.register(dbPlugin);
 await fastify.register(swaggerPlugin);
 await fastify.register(erasRoutes);
+await fastify.register(seasonsRoutes);
 
 fastify.get("/health", async () => ({ status: "ok" }));
 

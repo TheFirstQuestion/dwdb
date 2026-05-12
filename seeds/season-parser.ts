@@ -54,10 +54,10 @@ export function parseSeasons(wikitext: string): SeasonData[] {
 
 		// Only split on Season/Series subsections; specials/other headings stay
 		// as part of the preceding chunk and are naturally skipped
-		const seasonSections = eraSection.split(/(?=^=== \[\[(?:Season|Series))/m);
+		const seasonSections = eraSection.split(/(?=^===\s*\[\[(?:Season|Series))/m);
 
 		for (const seasonSection of seasonSections) {
-			const headingMatch = seasonSection.match(/^=== (\[\[[^\]]+\]\]) ===/m);
+			const headingMatch = seasonSection.match(/^===\s*(\[\[[^\]]+\]\])\s*===/m);
 			if (!headingMatch) continue;
 
 			const parsed = parseSeasonHeading(headingMatch[1]);

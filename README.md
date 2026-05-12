@@ -59,7 +59,7 @@ These instructions will get you a copy of the project up and running.
 1. Clone the repo
 
     ```sh
-    git clone https://github.com/sopferman/dwdb.git
+    git clone https://github.com/thefirstquestion/dwdb.git
     cd dwdb
     ```
 

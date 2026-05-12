@@ -14,6 +14,22 @@ Doctor Who episode database API.
 - Future-proof: never hardcode finite lists of domain entities that will grow as the show continues (e.g. a fixed map of Doctor names). Derive values algorithmically instead.
 - Before committing: code must type-check cleanly (`pnpm build`), lint cleanly (`pnpm lint`), be formatted (`pnpm format`), and all tests must pass (`pnpm test`).
 
+## Seeding
+
+Run in order — each step depends on the previous:
+
+```
+pnpm migrate:up     # apply all migrations
+pnpm seed           # run all seed-NN-*.ts scripts in seeds/ in order
+```
+
+Individual seeds (run standalone if needed): `pnpm seed:eras`, `pnpm seed:seasons`
+
+To add a new seed: create `seeds/seed-NN-name.ts` — it runs automatically in numeric order.
+
+Source data: `wiki-data/pages/List_of_Doctor_Who_television_stories.json`
+Download with `pnpm wiki:download` (or `pnpm wiki:download:test` for a 50-page sample).
+
 ## Data conventions
 - `doctor_id` on an episode refers to the Doctor's incarnation at the **start** of the episode. Regeneration episodes belong to the outgoing Doctor (e.g. "The Tenth Planet" → First Doctor, "End of Time" → Tenth Doctor).
 - The `eras` table `id` aligns with the canonical Doctor number. David Tennant has two rows: id=10 and id=14. `actor_id` references `people`.

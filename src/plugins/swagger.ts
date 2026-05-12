@@ -11,6 +11,10 @@ const swaggerPlugin: FastifyPluginAsync = async (fastify) => {
 				description: "Doctor Who episode database",
 				version: "0.1.0",
 			},
+			tags: [
+				{ name: "eras", description: "Doctor incarnations / eras" },
+				{ name: "seasons", description: "Classic and modern seasons / series" },
+			],
 		},
 	});
 

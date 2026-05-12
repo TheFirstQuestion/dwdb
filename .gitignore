@@ -13,7 +13,7 @@ wiki-data/pages/*.json
 token.json
 credentials.json
 *secret*.json
-
+.env
 
 ########################### VS Code ###########################
 *.code-workspace

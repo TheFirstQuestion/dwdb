@@ -12,6 +12,7 @@ const erasRoutes: FastifyPluginAsyncTypebox = async (fastify) => {
 		"/eras",
 		{
 			schema: {
+				tags: ["eras"],
 				description: "List all Doctor eras",
 				response: { 200: Type.Array(Era) },
 			},
@@ -25,6 +26,7 @@ const erasRoutes: FastifyPluginAsyncTypebox = async (fastify) => {
 		"/eras/:id",
 		{
 			schema: {
+				tags: ["eras"],
 				description: "Get a single era by Doctor number",
 				params: EraIdParam,
 				response: {

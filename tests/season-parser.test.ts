@@ -55,9 +55,7 @@ describe("extractFirstYear", () => {
 
 	it("extracts bare year after a date link (modern series format)", () => {
 		expect(
-			extractFirstYear(
-				"[[25 December (releases)|25 December]] 2005"
-			)
+			extractFirstYear("[[25 December (releases)|25 December]] 2005")
 		).toBe(2005);
 	});
 
@@ -139,6 +137,11 @@ describe("parseSeasons", () => {
 	it("parses Series 14 as Fifteenth Doctor, year 2023", () => {
 		const s = seasons.find((s) => s.name === "Series 14");
 		expect(s).toMatchObject({ eraId: 15, number: 14, year: 2023 });
+	});
+
+	it("parses Series 15 as Fifteenth Doctor, year 2024", () => {
+		const s = seasons.find((s) => s.name === "Series 15");
+		expect(s).toMatchObject({ eraId: 15, number: 15, year: 2024 });
 	});
 
 	it("excludes 2008-10 specials", () => {
