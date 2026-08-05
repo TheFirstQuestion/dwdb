@@ -1,3 +1,5 @@
+-- Up Migration
+
 -- People (actors, producers, showrunners, script editors, etc.)
 CREATE TABLE people (
   id    SERIAL PRIMARY KEY,
@@ -119,3 +121,23 @@ CREATE TABLE tvdb_mappings (
   tvdb_absolute_number INTEGER,
   UNIQUE (tvdb_series_id, tvdb_season_number, tvdb_episode_number)
 );
+
+-- Down Migration
+
+DROP TABLE tvdb_mappings;
+DROP TABLE tvdb_series;
+DROP TABLE episode_character_links;
+DROP TABLE character_actor_links;
+DROP TABLE characters;
+DROP TABLE episode_type_links;
+DROP TABLE episode_types;
+DROP TABLE episodes;
+DROP TABLE story_arcs;
+DROP TABLE stories;
+DROP TABLE arcs;
+DROP TABLE season_script_editors;
+DROP TABLE season_showrunners;
+DROP TABLE season_producers;
+DROP TABLE seasons;
+DROP TABLE eras;
+DROP TABLE people;

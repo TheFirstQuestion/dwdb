@@ -1,50 +1,53 @@
 {
-  "name": "dwdb",
-  "version": "0.1.0",
-  "type": "module",
-  "packageManager": "pnpm@10.33.0",
-  "scripts": {
-    "dev": "dotenv -e .env -- tsx watch src/index.ts",
-    "build": "tsc",
-    "start": "node dist/index.js",
-    "migrate:create": "dotenv -e .env -- node-pg-migrate create --migrations-dir migrations",
-    "migrate:up": "dotenv -e .env -- node-pg-migrate up --migrations-dir migrations",
-    "migrate:down": "dotenv -e .env -- node-pg-migrate down --migrations-dir migrations",
-    "wiki:download": "tsx scripts/download-wiki.ts",
-    "wiki:download:test": "MAX_PAGES=50 tsx scripts/download-wiki.ts",
-    "seed": "dotenv -e .env -- tsx seeds/seed.ts",
-    "seed:eras": "dotenv -e .env -- tsx seeds/seed-01-eras.ts",
-    "seed:seasons": "dotenv -e .env -- tsx seeds/seed-02-seasons.ts",
-    "test": "vitest run",
-    "lint": "eslint src/ seeds/ scripts/ tests/",
-    "format": "prettier --write src/ seeds/ scripts/ tests/",
-    "prepare": "husky"
-  },
-  "dependencies": {
-    "@fastify/swagger": "^9.7.0",
-    "@fastify/swagger-ui": "^5.2.6",
-    "@fastify/type-provider-typebox": "^6.1.0",
-    "@sinclair/typebox": "^0.34.49",
-    "fastify": "^5.8.5",
-    "fastify-plugin": "^5.1.0",
-    "postgres": "^3.4.4"
-  },
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "esbuild"
-    ]
-  },
-  "devDependencies": {
-    "@types/node": "^20.0.0",
-    "dotenv-cli": "^8.0.0",
-    "eslint": "^10.2.1",
-    "eslint-config-prettier": "^10.1.8",
-    "husky": "^9.1.7",
-    "node-pg-migrate": "^8.0.4",
-    "prettier": "^3.8.3",
-    "tsx": "^4.19.0",
-    "typescript": "^5.4.0",
-    "typescript-eslint": "^8.59.0",
-    "vitest": "^3.2.4"
-  }
+	"name": "dwdb",
+	"version": "0.1.0",
+	"type": "module",
+	"packageManager": "pnpm@10.33.0",
+	"scripts": {
+		"dev": "dotenv -e .env -- tsx watch src/index.ts",
+		"build": "tsc",
+		"start": "node dist/index.js",
+		"migrate:create": "dotenv -e .env -- node-pg-migrate create --migrations-dir migrations",
+		"migrate:up": "dotenv -e .env -- node-pg-migrate up --migrations-dir migrations",
+		"migrate:down": "dotenv -e .env -- node-pg-migrate down --migrations-dir migrations",
+		"wiki:download": "tsx scripts/download-wiki.ts",
+		"wiki:download:test": "MAX_PAGES=50 tsx scripts/download-wiki.ts",
+		"seed": "dotenv -e .env -- tsx seeds/seed.ts",
+		"seed:eras": "dotenv -e .env -- tsx seeds/seed-01-eras.ts",
+		"seed:seasons": "dotenv -e .env -- tsx seeds/seed-02-seasons.ts",
+		"seed:episodes": "dotenv -e .env -- tsx seeds/seed-03-episodes.ts",
+		"test": "vitest run",
+		"lint": "eslint src/ seeds/ scripts/ tests/",
+		"lint:md": "markdownlint-cli2",
+		"format": "prettier --write src/ seeds/ scripts/ tests/",
+		"prepare": "husky"
+	},
+	"dependencies": {
+		"@fastify/swagger": "^9.7.0",
+		"@fastify/swagger-ui": "^5.2.6",
+		"@fastify/type-provider-typebox": "^6.1.0",
+		"@sinclair/typebox": "^0.34.49",
+		"fastify": "^5.8.5",
+		"fastify-plugin": "^5.1.0",
+		"postgres": "^3.4.4"
+	},
+	"pnpm": {
+		"onlyBuiltDependencies": [
+			"esbuild"
+		]
+	},
+	"devDependencies": {
+		"@types/node": "^20.0.0",
+		"dotenv-cli": "^8.0.0",
+		"eslint": "^10.2.1",
+		"eslint-config-prettier": "^10.1.8",
+		"husky": "^9.1.7",
+		"markdownlint-cli2": "^0.23.2",
+		"node-pg-migrate": "^8.0.4",
+		"prettier": "^3.8.3",
+		"tsx": "^4.19.0",
+		"typescript": "^5.4.0",
+		"typescript-eslint": "^8.59.0",
+		"vitest": "^3.2.4"
+	}
 }

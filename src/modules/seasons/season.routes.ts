@@ -1,7 +1,7 @@
-import { Type } from "@sinclair/typebox";
 import type { FastifyPluginAsyncTypebox } from "@fastify/type-provider-typebox";
 import { Season, SeasonIdParam, SeasonQuerystring } from "./season.schema.js";
 import { ErrorMessage } from "../../basic/BasicSchemas.js";
+import { Paginated, resolvePagination } from "../../basic/Pagination.js";
 import { SeasonRepository } from "./season.repository.js";
 import { SeasonService } from "./season.service.js";
 
@@ -15,11 +15,12 @@ const seasonsRoutes: FastifyPluginAsyncTypebox = async (fastify) => {
 				tags: ["seasons"],
 				description: "List all seasons, optionally filtered by Doctor era",
 				querystring: SeasonQuerystring,
-				response: { 200: Type.Array(Season) },
+				response: { 200: Paginated(Season) },
 			},
 		},
 		async (request) => {
-			return service.getAll(request.query.era_id);
+			const { pageNum, perPage, era_id } = request.query;
+			return service.getAll(resolvePagination({ pageNum, perPage }), era_id);
 		}
 	);
 

@@ -4,12 +4,17 @@ import {
 	toPaginatedResult,
 	type PaginationParams,
 } from "../../basic/Pagination.js";
-import type { SeasonRepository } from "./season.repository.js";
+import type { EpisodeRepository } from "./episode.repository.js";
 
-export class SeasonService extends BaseService<SeasonRepository> {
-	async getAll(pagination: PaginationParams, eraId?: number) {
+export class EpisodeService extends BaseService<EpisodeRepository> {
+	async getAll(
+		pagination: PaginationParams,
+		eraId?: number,
+		seasonId?: number
+	) {
 		const { rows, total } = await this.repo.findAllPaginated({
 			eraId,
+			seasonId,
 			limit: pagination.perPage,
 			offset: paginationOffset(pagination),
 		});

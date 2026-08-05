@@ -159,3 +159,5 @@ __MACOSX/
 Network Trash Folder
 Temporary Items
 .apdisk
+# Added by code-review-graph
+.code-review-graph/

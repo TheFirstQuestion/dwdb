@@ -5,28 +5,26 @@
 #   https://github.com/kylelobo/The-Documentation-Compendium/
 -->
 
-<h1 align="center">dwdb</h1>
-<div id="top"></div>
+# dwdb
 
-<p align="center">
-  A structured database and REST API for Doctor Who episodes, stories, and spin-offs — designed to map cleanly to TVDB while supporting richer organization than TVDB allows.
-  <br>
-</p>
+A structured database and REST API for Doctor Who episodes, stories, and spin-offs — designed to map cleanly to TVDB while supporting richer organization than TVDB allows.
 
 ## Table of Contents
 
 - [About](#about)
 - [Usage](#usage)
-- [Getting Started](#getting_started)
+- [Getting Started](#getting-started)
 - [Roadmap](#roadmap)
 - [Contributing](#contributing)
 - [Acknowledgements](#acknowledgements)
 
-## About <a name="about"></a>
+## About
 
 TVDB (and by extension Plex, Sonarr, etc.) struggles with Doctor Who: specials land in awkward Season 0 buckets, multi-part stories have no first-class representation, and spin-offs have no cross-references to the parent show.
 
 dwdb maintains a canonical episode database with its own organization logic, then provides a TVDB mapping layer so Plex-compatible tools can still look things up by TVDB ID.
+
+See [docs/GOALS.md](docs/GOALS.md) for the full project goals and [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for how it's built.
 
 ### Data conventions
 
@@ -35,17 +33,17 @@ dwdb maintains a canonical episode database with its own organization logic, the
 - **Stories belong to a single era.** For multi-Doctor stories, the broadcast year determines the era — e.g. *The Day of the Doctor* (2013) belongs to the Eleventh Doctor era.
 - **Stories can belong to zero or more arcs** — e.g. *Parting of the Ways* is part of both the Bad Wolf arc and the Torchwood arc.
 
-<p align="right">(<a href="#top">back to top</a>)</p>
+[Back to top](#dwdb)
 
-## Usage <a name="usage"></a>
+## Usage
 
 API docs are available at `http://localhost:3000/docs` when running locally.
 
 <!-- _For more examples, please refer to the [Documentation](https://example.com)_ -->
 
-<p align="right">(<a href="#top">back to top</a>)</p>
+[Back to top](#dwdb)
 
-## Getting Started <a name="getting_started"></a>
+## Getting Started
 
 These instructions will get you a copy of the project up and running.
 
@@ -58,56 +56,54 @@ These instructions will get you a copy of the project up and running.
 
 1. Clone the repo
 
-    ```sh
-    git clone https://github.com/thefirstquestion/dwdb.git
-    cd dwdb
-    ```
+   ```sh
+   git clone https://github.com/thefirstquestion/dwdb.git
+   cd dwdb
+   ```
 
 2. Install dependencies
 
-    ```sh
-    npm install
-    ```
+   ```sh
+   npm install
+   ```
 
 3. Copy the env file and adjust if needed
 
-    ```sh
-    cp .env.example .env
-    ```
+   ```sh
+   cp .env.example .env
+   ```
 
 4. Start Postgres
 
-    ```sh
-    docker compose up -d
-    ```
+   ```sh
+   docker compose up -d
+   ```
 
 5. Run migrations
 
-    ```sh
-    npm run migrate:up
-    ```
+   ```sh
+   npm run migrate:up
+   ```
 
 6. Start the dev server
 
-    ```sh
-    npm run dev
-    ```
+   ```sh
+   npm run dev
+   ```
 
-<p align="right">(<a href="#top">back to top</a>)</p>
+[Back to top](#dwdb)
 
-## Roadmap <a name="roadmap"></a>
+## Roadmap
 
-- [ ] Schema design
-- [ ] Seed data
-- [ ] REST API
+See [docs/GOALS.md](docs/GOALS.md#roadmap-direction) for the current roadmap.
 
 <!--
 See the [open issues](https://github.com/github_username/repo_name/issues) for a full list of proposed features (and known issues).
 -->
 
-<p align="right">(<a href="#top">back to top</a>)</p>
+[Back to top](#dwdb)
 
-## Contributing <a name="contributing"></a>
+## Contributing
 
 Collaboration is what makes the world such an amazing place to learn, inspire, and create. **Any contributions or suggestions you make are greatly appreciated!**
 
@@ -117,11 +113,11 @@ Feel free to do any of the following:
 - [open an issue](https://docs.github.com/en/issues/tracking-your-work-with-issues/creating-an-issue) with the tag "enhancement"
 - [fork the repo](https://docs.github.com/en/get-started/quickstart/fork-a-repo) and [create a pull request](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request)
 
-<p align="right">(<a href="#top">back to top</a>)</p>
+[Back to top](#dwdb)
 
-## Acknowledgements <a name="acknowledgements"></a>
+## Acknowledgements
 
 - [TARDIS Data Core](https://tardis.fandom.com) — reference for episode metadata
 - [TVDB](https://thetvdb.com) — mapping target
 
-<p align="right">(<a href="#top">back to top</a>)</p>
+[Back to top](#dwdb)

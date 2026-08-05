@@ -7,20 +7,30 @@ export class SeasonRepository extends BaseRepository<SeasonRow> {
 		super(db, "seasons");
 	}
 
-	override async findAll(eraId?: number): Promise<SeasonRow[]> {
-		if (eraId !== undefined) {
-			return this.db<SeasonRow[]>`
-        SELECT id, era_id, number, name, year
-        FROM seasons
-        WHERE era_id = ${eraId}
-        ORDER BY year, number
-      `;
-		}
-		return this.db<SeasonRow[]>`
+	override async findAllPaginated(options: {
+		limit: number;
+		offset: number;
+		eraId?: number;
+	}): Promise<{ rows: SeasonRow[]; total: number }> {
+		const { eraId, limit, offset } = options;
+
+		const filters = [];
+		if (eraId !== undefined) filters.push(this.db`era_id = ${eraId}`);
+		const where = filters.length
+			? this.db`WHERE ${filters.reduce((acc, f) => this.db`${acc} AND ${f}`)}`
+			: this.db``;
+
+		const rows = await this.db<SeasonRow[]>`
       SELECT id, era_id, number, name, year
       FROM seasons
+      ${where}
       ORDER BY year, number
+      LIMIT ${limit} OFFSET ${offset}
     `;
+		const [{ count }] = await this.db<{ count: string }[]>`
+      SELECT COUNT(*)::text AS count FROM seasons ${where}
+    `;
+		return { rows, total: Number(count) };
 	}
 
 	override async findById(id: number): Promise<SeasonRow | null> {
