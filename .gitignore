@@ -9,6 +9,9 @@
 wiki-data/pages/*.json
 !wiki-data/pages/List_of_Doctor_Who_television_stories.json
 
+########################### Claude ########################## 
+.mcp.json
+
 ########################### Common Credential Filenames ###########################
 token.json
 credentials.json
@@ -71,6 +74,7 @@ yarn-error.log*
 __pycache__/
 *.py[cod]
 *$py.class
+.conda_config
 
 
 ########################## SASS ##########################
