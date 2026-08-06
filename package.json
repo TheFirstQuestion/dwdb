@@ -5,7 +5,8 @@
 	"packageManager": "pnpm@10.33.0",
 	"scripts": {
 		"dev": "dotenv -e .env -- tsx watch src/index.ts",
-		"build": "tsc",
+		"typecheck": "tsc --noEmit",
+		"build": "pnpm typecheck && tsc -p tsconfig.build.json",
 		"start": "node dist/index.js",
 		"migrate:create": "dotenv -e .env -- node-pg-migrate create --migrations-dir migrations",
 		"migrate:up": "dotenv -e .env -- node-pg-migrate up --migrations-dir migrations",
