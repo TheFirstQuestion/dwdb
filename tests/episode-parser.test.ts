@@ -5,6 +5,10 @@ import {
 	extractEpisodeCount,
 	extractAirDate,
 	parseStories,
+	parseRawStories,
+	buildEpisodeRows,
+	NON_MERGING_STORY_GROUPS,
+	type ParsedStory,
 } from "../seeds/episode-parser.js";
 import { loadWikitext } from "./helpers.js";
 
@@ -178,10 +182,136 @@ describe("parseStories", () => {
 		expect(classicEpisodes).toBeGreaterThan(600);
 	});
 
-	it("modern stories each have episodeCount of 1", () => {
+	it("modern stories each have episodeCount of 1, except recognized multi-part stories", () => {
 		const modernMultiEp = stories.filter(
 			(s) => s.eraId >= 9 && s.episodeCount > 1
 		);
-		expect(modernMultiEp).toHaveLength(0);
+		expect(modernMultiEp.every((s) => s.parts && s.parts.length > 1)).toBe(
+			true
+		);
+	});
+
+	it("merges lettered two-part story 311a/311b into a single story with per-part titles", () => {
+		const merged = stories.find((s) => s.wikiNumber === "311");
+		expect(merged).toMatchObject({
+			title: "The Legend of Ruby Sunday",
+			episodeCount: 2,
+			parts: [
+				{ title: "The Legend of Ruby Sunday", airDate: "2024-06-15" },
+				{ title: "Empire of Death", airDate: "2024-06-22" },
+			],
+		});
+
+		expect(stories.find((s) => s.wikiNumber === "311a")).toBeUndefined();
+		expect(stories.find((s) => s.wikiNumber === "311b")).toBeUndefined();
+	});
+
+	it("merges lettered six-part story 297a-f (Flux) into one story with per-part titles", () => {
+		const merged = stories.find((s) => s.wikiNumber === "297");
+		expect(merged?.episodeCount).toBe(6);
+		expect(merged?.parts).toHaveLength(6);
+
+		for (const letter of ["a", "b", "c", "d", "e", "f"]) {
+			expect(
+				stories.find((s) => s.wikiNumber === `297${letter}`)
+			).toBeUndefined();
+		}
+	});
+
+	it("does not merge The Trial of a Time Lord (143a-143d) — denylisted as four separate stories", () => {
+		expect(stories.find((s) => s.wikiNumber === "143")).toBeUndefined();
+
+		const parts = ["143a", "143b", "143c", "143d"];
+		const expectedEpisodeCounts = [4, 4, 4, 2];
+		parts.forEach((wikiNumber, i) => {
+			const s = stories.find((s) => s.wikiNumber === wikiNumber);
+			expect(s).toMatchObject({
+				episodeCount: expectedEpisodeCounts[i],
+			});
+			expect(s?.parts).toBeUndefined();
+		});
+	});
+
+	it("flags every classic-style lettered group as a denylist entry (or fails, prompting a human decision)", () => {
+		// Re-derive the raw, pre-merge rows for this assertion. parseStories()
+		// only returns the post-merge result, so this test needs a way to see
+		// the rows before mergeLetteredParts runs.
+		const rawStories = parseRawStories(wikitext);
+
+		const classicBaseNumbers = new Set<string>();
+		for (const story of rawStories) {
+			const m = story.wikiNumber.match(/^(\d+)([a-z])$/);
+			if (m && story.isClassic) classicBaseNumbers.add(m[1]);
+		}
+
+		// Every base number flagged as classic-style must already be a
+		// deliberate denylist entry. A base number showing up here that ISN'T
+		// in NON_MERGING_STORY_GROUPS means a new Trial-of-a-Time-Lord-shaped
+		// group appeared in the wiki data and nobody has classified it yet.
+		for (const base of classicBaseNumbers) {
+			expect(NON_MERGING_STORY_GROUPS.has(base)).toBe(true);
+		}
+	});
+});
+
+describe("buildEpisodeRows", () => {
+	it("builds a single row for a single-episode modern story", () => {
+		const rose: ParsedStory = {
+			wikiNumber: "162",
+			title: "Rose",
+			eraId: 9,
+			seasonName: "Series 1",
+			episodeCount: 1,
+			airDate: "2005-03-26",
+			partNumber: null,
+			isClassic: false,
+		};
+		expect(buildEpisodeRows(rose)).toEqual([
+			{ title: "Rose", airDate: "2005-03-26", partNumber: null },
+		]);
+	});
+
+	it("synthesizes numbered parts sharing the story title for a classic multi-part story", () => {
+		const unearthlyChild: ParsedStory = {
+			wikiNumber: "1",
+			title: "An Unearthly Child",
+			eraId: 1,
+			seasonName: "Season 1",
+			episodeCount: 4,
+			airDate: "1963-11-23",
+			partNumber: null,
+			isClassic: true,
+		};
+		expect(buildEpisodeRows(unearthlyChild)).toEqual([
+			{ title: "An Unearthly Child", airDate: "1963-11-23", partNumber: 1 },
+			{ title: "An Unearthly Child", airDate: null, partNumber: 2 },
+			{ title: "An Unearthly Child", airDate: null, partNumber: 3 },
+			{ title: "An Unearthly Child", airDate: null, partNumber: 4 },
+		]);
+	});
+
+	it("uses each part's own title and air date for a merged lettered two-part story", () => {
+		const legendOfRubySunday: ParsedStory = {
+			wikiNumber: "311",
+			title: "The Legend of Ruby Sunday",
+			eraId: 15,
+			seasonName: "Series 14",
+			episodeCount: 2,
+			airDate: "2024-06-15",
+			partNumber: null,
+			isClassic: false,
+			parts: [
+				{ title: "The Legend of Ruby Sunday", airDate: "2024-06-15" },
+				{ title: "Empire of Death", airDate: "2024-06-22" },
+			],
+		};
+		expect(buildEpisodeRows(legendOfRubySunday)).toEqual([
+			{
+				title: "The Legend of Ruby Sunday",
+				airDate: "2024-06-15",
+				partNumber: 1,
+			},
+			{ title: "Empire of Death", airDate: "2024-06-22", partNumber: 2 },
+		]);
 	});
 });

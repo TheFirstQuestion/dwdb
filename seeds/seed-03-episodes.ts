@@ -2,7 +2,7 @@ import { readFile } from "fs/promises";
 import { join, dirname } from "path";
 import { fileURLToPath } from "url";
 import postgres from "postgres";
-import { parseStories } from "./episode-parser.js";
+import { buildEpisodeRows, parseStories } from "./episode-parser.js";
 
 const WIKI_PAGE = join(
 	dirname(fileURLToPath(import.meta.url)),
@@ -61,23 +61,12 @@ async function main() {
 
 				await tx`DELETE FROM episodes WHERE story_id = ${storyId}`;
 
-				if (story.episodeCount > 1) {
-					for (let i = 1; i <= story.episodeCount; i++) {
-						await tx`
-              INSERT INTO episodes (story_id, era_id, season_id, title, air_date, part_number)
-              VALUES (
-                ${storyId}, ${story.eraId}, ${seasonId}, ${story.title},
-                ${i === 1 ? story.airDate : null}, ${i}
-              )
-            `;
-						episodeCount++;
-					}
-				} else {
+				for (const row of buildEpisodeRows(story)) {
 					await tx`
             INSERT INTO episodes (story_id, era_id, season_id, title, air_date, part_number)
             VALUES (
-              ${storyId}, ${story.eraId}, ${seasonId}, ${story.title},
-              ${story.airDate}, ${story.partNumber}
+              ${storyId}, ${story.eraId}, ${seasonId}, ${row.title},
+              ${row.airDate}, ${row.partNumber}
             )
           `;
 					episodeCount++;
