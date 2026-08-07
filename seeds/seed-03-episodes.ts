@@ -23,8 +23,12 @@ async function main() {
 		const page = p as {
 			revisions: Array<{ slots: { main: { "*": string } } }>;
 		};
-		return page.revisions[0].slots.main["*"];
+		const revision = page.revisions[0];
+		if (!revision) throw new Error("No revision found in wiki page");
+		return revision.slots.main["*"];
 	})[0];
+
+	if (!wikitext) throw new Error("No wikitext found in parsed page");
 
 	const stories = parseStories(wikitext);
 
@@ -47,7 +51,7 @@ async function main() {
 					? (seasonByName.get(story.seasonName) ?? null)
 					: null;
 
-				const [storyRow] = await tx<{ id: number }[]>`
+				const storyRows = await tx<{ id: number }[]>`
           INSERT INTO stories (title, era_id, season_id, wiki_number)
           VALUES (${story.title}, ${story.eraId}, ${seasonId}, ${story.wikiNumber})
           ON CONFLICT (wiki_number) DO UPDATE
@@ -56,6 +60,8 @@ async function main() {
                 season_id  = EXCLUDED.season_id
           RETURNING id
         `;
+				const storyRow = storyRows[0];
+				if (!storyRow) throw new Error("Failed to insert/update story");
 				const storyId = storyRow.id;
 				storyCount++;
 

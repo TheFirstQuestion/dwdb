@@ -27,9 +27,13 @@ export abstract class BaseRepository<TRow extends object> {
       SELECT * FROM ${this.db(this.table)}
       LIMIT ${limit} OFFSET ${offset}
     `;
-		const [{ count }] = await this.db<{ count: string }[]>`
+		const countResult = await this.db<{ count: string }[]>`
       SELECT COUNT(*)::text AS count FROM ${this.db(this.table)}
     `;
+		if (!countResult[0]) {
+			throw new Error(`Failed to retrieve count for ${this.table}`);
+		}
+		const { count } = countResult[0];
 		return { rows, total: Number(count) };
 	}
 }

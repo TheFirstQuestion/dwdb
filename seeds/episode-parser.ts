@@ -48,22 +48,32 @@ export function extractTitle(cell: string): string {
 	cell = cell.replace(/<small>[^<]*<\/small>/gi, "");
 	const withPipe = cell.match(/\[\[[^\]]*\|([^\]]+)\]\]/);
 	if (withPipe) {
-		cell = withPipe[1];
+		const matched = withPipe[1];
+		if (matched !== undefined) {
+			cell = matched;
+		}
 	} else {
 		const bare = cell.match(/\[\[([^\]]*)\]\]/);
-		if (bare) cell = bare[1];
+		if (bare) {
+			const matched = bare[1];
+			if (matched !== undefined) cell = matched;
+		}
 	}
 	return cell.replace(/''/g, "").trim();
 }
 
 export function extractPartNumber(cell: string): number | null {
 	const m = cell.match(/<small>\s*\(Part\s+(\d+)\)\s*<\/small>/i);
-	return m ? parseInt(m[1]) : null;
+	if (!m) return null;
+	const matched = m[1];
+	return matched !== undefined ? parseInt(matched) : null;
 }
 
 export function extractEpisodeCount(cell: string): number {
 	const m = cell.match(/^(\d+)/);
-	return m ? parseInt(m[1]) : 1;
+	if (!m) return 1;
+	const matched = m[1];
+	return matched !== undefined ? parseInt(matched) : 1;
 }
 
 export function extractAirDate(cell: string): string | null {
@@ -76,11 +86,17 @@ export function extractAirDate(cell: string): string | null {
 
 	let day: number, monthName: string;
 	if (linkedDayMonth) {
-		day = parseInt(linkedDayMonth[1]);
-		monthName = linkedDayMonth[2];
+		const d = linkedDayMonth[1];
+		const m = linkedDayMonth[2];
+		if (d === undefined || m === undefined) return null;
+		day = parseInt(d);
+		monthName = m;
 	} else if (bareDayMonth) {
-		day = parseInt(bareDayMonth[1]);
-		monthName = bareDayMonth[2];
+		const d = bareDayMonth[1];
+		const m = bareDayMonth[2];
+		if (d === undefined || m === undefined) return null;
+		day = parseInt(d);
+		monthName = m;
 	} else {
 		return null;
 	}
@@ -92,11 +108,16 @@ export function extractAirDate(cell: string): string | null {
 		/\[\[(\d{4})\s*\((?:releases|production)\)\|[^\]]+\]\]/
 	);
 	const bareYear = cell.match(/\b(19\d{2}|20\d{2})\b/);
-	const year = linkedYear
-		? parseInt(linkedYear[1])
-		: bareYear
-			? parseInt(bareYear[1])
-			: null;
+
+	let year: number | null = null;
+	if (linkedYear) {
+		const y = linkedYear[1];
+		year = y !== undefined ? parseInt(y) : null;
+	} else if (bareYear) {
+		const y = bareYear[1];
+		year = y !== undefined ? parseInt(y) : null;
+	}
+
 	if (!year) return null;
 
 	return `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
@@ -118,7 +139,13 @@ function parseRow(
 	seasonName: string | null
 ): ParsedStory | null {
 	if (cells.length < 4) return null;
-	const [c1, c2, c3, c4] = cells;
+
+	const c1 = cells[0];
+	const c2 = cells[1];
+	const c3 = cells[2];
+	const c4 = cells[3];
+
+	if (!c1 || !c2 || !c3 || !c4) return null;
 
 	const wikiNumber = c1.trim();
 	if (!wikiNumber || !/^\d/.test(wikiNumber)) return null;
@@ -163,7 +190,7 @@ export function parseRawStories(wikitext: string): ParsedStory[] {
 
 	for (const eraSection of eraSections) {
 		const eraMatch = eraSection.match(/^== (\w+) Doctor.* ==/m);
-		if (!eraMatch) continue;
+		if (!eraMatch || !eraMatch[1]) continue;
 		const eraId = ordinalWordToNumber(eraMatch[1]);
 		if (!eraId) continue;
 
@@ -172,7 +199,7 @@ export function parseRawStories(wikitext: string): ParsedStory[] {
 		for (const sub of subsections) {
 			let seasonName: string | null = null;
 			const headingMatch = sub.match(/^={3,}\s*(\[\[[^\]]+\]\])\s*={3,}/m);
-			if (headingMatch) {
+			if (headingMatch && headingMatch[1]) {
 				const parsed = parseSeasonHeading(headingMatch[1]);
 				seasonName = parsed ? parsed.name : null;
 			}
@@ -199,15 +226,26 @@ export function parseRawStories(wikitext: string): ParsedStory[] {
 					let cells: string[];
 					if (lines.length >= 4) {
 						cells = lines.slice(0, 4).map(cellContent);
-						const rowspanMatch = lines[1].match(/rowspan="(\d+)"/);
-						carryCell = rowspanMatch ? cells[1] : null;
-						carryRemaining = rowspanMatch ? parseInt(rowspanMatch[1]) - 1 : 0;
+						const line1 = lines[1];
+						if (line1) {
+							const rowspanMatch = line1.match(/rowspan="(\d+)"/);
+							if (rowspanMatch) {
+								carryCell = cells[1] ?? null;
+								const spanCount = rowspanMatch[1];
+								carryRemaining =
+									spanCount !== undefined ? parseInt(spanCount) - 1 : 0;
+							}
+						}
 					} else if (lines.length === 3 && carryRemaining > 0) {
+						const line0 = lines[0];
+						const line1 = lines[1];
+						const line2 = lines[2];
+						if (!line0 || !line1 || !line2 || !carryCell) continue;
 						cells = [
-							cellContent(lines[0]),
-							carryCell as string,
-							cellContent(lines[1]),
-							cellContent(lines[2]),
+							cellContent(line0),
+							carryCell,
+							cellContent(line1),
+							cellContent(line2),
 						];
 						carryRemaining--;
 					} else {
@@ -286,20 +324,22 @@ function mergeLetteredParts(stories: ParsedStory[]): ParsedStory[] {
 
 	const flush = () => {
 		if (buffer.length === 0) return;
-		if (
+		const shouldNotMerge =
 			buffer.length === 1 ||
-			NON_MERGING_STORY_GROUPS.has(bufferBase as string)
-		) {
+			(bufferBase !== null && NON_MERGING_STORY_GROUPS.has(bufferBase));
+		if (shouldNotMerge) {
 			merged.push(...buffer);
-		} else {
-			const [first] = buffer;
-			merged.push({
-				...first,
-				wikiNumber: bufferBase as string,
-				episodeCount: buffer.length,
-				partNumber: null,
-				parts: buffer.map((s) => ({ title: s.title, airDate: s.airDate })),
-			});
+		} else if (bufferBase) {
+			const first = buffer[0];
+			if (first) {
+				merged.push({
+					...first,
+					wikiNumber: bufferBase,
+					episodeCount: buffer.length,
+					partNumber: null,
+					parts: buffer.map((s) => ({ title: s.title, airDate: s.airDate })),
+				});
+			}
 		}
 		buffer = [];
 		bufferBase = null;
@@ -307,7 +347,7 @@ function mergeLetteredParts(stories: ParsedStory[]): ParsedStory[] {
 
 	for (const story of stories) {
 		const m = story.wikiNumber.match(/^(\d+)([a-z])$/);
-		if (!m) {
+		if (!m || !m[1]) {
 			flush();
 			merged.push(story);
 			continue;

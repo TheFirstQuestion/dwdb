@@ -6,14 +6,19 @@ export function extractYears(text: string): number[] {
 	for (const m of text.matchAll(
 		/\[\[(\d{4}) \((?:production|releases)\)\|\d{4}\]\]/g
 	)) {
-		years.push(parseInt(m[1]));
+		const year = m[1];
+		if (year !== undefined) {
+			years.push(parseInt(year));
+		}
 	}
 	return years;
 }
 
 export function extractActor(text: string): string | null {
 	const m = text.match(/portrayed by \[\[([^\]|]+)(?:\|[^\]]+)?\]\]/);
-	return m ? m[1] : null;
+	if (!m) return null;
+	const actor = m[1];
+	return actor !== undefined ? actor : null;
 }
 
 export function parseEras(wikitext: string): EraRow[] {
@@ -25,6 +30,7 @@ export function parseEras(wikitext: string): EraRow[] {
 		if (!headingMatch) continue;
 
 		const doctorName = headingMatch[1];
+		if (!doctorName) continue;
 		const doctorNumber = ordinalWordToNumber(doctorName);
 		if (!doctorNumber) continue;
 
@@ -34,7 +40,10 @@ export function parseEras(wikitext: string): EraRow[] {
 			// Canonical 9th Doctor (Eccleston) is inside the Series 1 subsection —
 			// the top-level intro describes Rowan Atkinson in the non-canon Curse of Fatal Death
 			const m = section.match(/=== \[\[Series 1.*?\]\] ===\n(.+)/);
-			introLine = m ? m[1] : null;
+			if (m) {
+				const matched = m[1];
+				introLine = matched !== undefined ? matched : null;
+			}
 		} else {
 			const lines = section.split("\n").slice(1);
 			introLine =
@@ -62,11 +71,15 @@ export function parseEras(wikitext: string): EraRow[] {
 		const isOngoing =
 			/ from \[\[/.test(introLine) && !/ to \[\[/.test(introLine);
 
+		const startYear = years[0];
+		const endYear = years[years.length - 1];
+		if (!startYear || !endYear) continue;
+
 		eras.push({
 			id: doctorNumber,
 			actor,
-			start_year: years[0],
-			end_year: isOngoing ? null : years[years.length - 1],
+			start_year: startYear,
+			end_year: isOngoing ? null : endYear,
 		});
 	}
 

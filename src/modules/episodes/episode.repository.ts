@@ -30,9 +30,13 @@ export class EpisodeRepository extends BaseRepository<EpisodeRow> {
       ORDER BY air_date NULLS LAST, id
       LIMIT ${limit} OFFSET ${offset}
     `;
-		const [{ count }] = await this.db<{ count: string }[]>`
+		const countResult = await this.db<{ count: string }[]>`
       SELECT COUNT(*)::text AS count FROM episodes ${where}
     `;
+		if (!countResult[0]) {
+			throw new Error("Failed to retrieve count for episodes");
+		}
+		const { count } = countResult[0];
 		return { rows, total: Number(count) };
 	}
 

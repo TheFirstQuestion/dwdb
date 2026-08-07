@@ -18,5 +18,8 @@ export function loadWikitext(): string {
 			{ revisions: Array<{ slots: { main: { "*": string } } }> }
 		>
 	)[0];
-	return page.revisions[0].slots.main["*"];
+	if (!page) throw new Error("No wiki page found");
+	const revision = page.revisions[0];
+	if (!revision) throw new Error("No revision found in wiki page");
+	return revision.slots.main["*"];
 }

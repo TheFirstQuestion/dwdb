@@ -27,9 +27,13 @@ export class SeasonRepository extends BaseRepository<SeasonRow> {
       ORDER BY year, number
       LIMIT ${limit} OFFSET ${offset}
     `;
-		const [{ count }] = await this.db<{ count: string }[]>`
+		const countResult = await this.db<{ count: string }[]>`
       SELECT COUNT(*)::text AS count FROM seasons ${where}
     `;
+		if (!countResult[0]) {
+			throw new Error("Failed to retrieve count for seasons");
+		}
+		const { count } = countResult[0];
 		return { rows, total: Number(count) };
 	}
 

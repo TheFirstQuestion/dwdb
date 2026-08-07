@@ -23,8 +23,12 @@ async function main() {
 		const page = p as {
 			revisions: Array<{ slots: { main: { "*": string } } }>;
 		};
-		return page.revisions[0].slots.main["*"];
+		const revision = page.revisions[0];
+		if (!revision) throw new Error("No revision found in wiki page");
+		return revision.slots.main["*"];
 	})[0];
+
+	if (!wikitext) throw new Error("No wikitext found in parsed page");
 
 	const eras = parseEras(wikitext);
 
@@ -46,9 +50,17 @@ async function main() {
           RETURNING id
         `;
 
-				const personId =
-					person?.id ??
-					(await tx`SELECT id FROM people WHERE name = ${era.actor}`)[0].id;
+				let personId: number;
+				if (person?.id) {
+					personId = person.id;
+				} else {
+					const foundPerson = (
+						await tx`SELECT id FROM people WHERE name = ${era.actor}`
+					)[0];
+					if (!foundPerson)
+						throw new Error(`Could not find person: ${era.actor}`);
+					personId = foundPerson.id;
+				}
 
 				await tx`
           INSERT INTO eras (id, actor_id, start_year, end_year)

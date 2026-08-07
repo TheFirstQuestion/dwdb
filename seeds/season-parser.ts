@@ -18,7 +18,9 @@ export function parseSeasonHeading(
 	const numMatch = name.match(/(?:Season|Series)\s+(\d+)/i);
 	if (!numMatch) return null;
 
-	return { number: parseInt(numMatch[1]), name };
+	const num = numMatch[1];
+	if (!num) return null;
+	return { number: parseInt(num), name };
 }
 
 export function extractFirstYear(text: string): number | null {
@@ -34,10 +36,21 @@ export function extractFirstYear(text: string): number | null {
 	const bare = BARE.exec(haystack);
 
 	if (linked && bare) {
-		return linked.index < bare.index ? parseInt(linked[1]) : parseInt(bare[1]);
+		const linkedYear = linked[1];
+		const bareYear = bare[1];
+		if (!linkedYear || !bareYear) return null;
+		return linked.index < bare.index
+			? parseInt(linkedYear)
+			: parseInt(bareYear);
 	}
-	if (linked) return parseInt(linked[1]);
-	if (bare) return parseInt(bare[1]);
+	if (linked) {
+		const year = linked[1];
+		return year !== undefined ? parseInt(year) : null;
+	}
+	if (bare) {
+		const year = bare[1];
+		return year !== undefined ? parseInt(year) : null;
+	}
 	return null;
 }
 
@@ -49,7 +62,9 @@ export function parseSeasons(wikitext: string): SeasonData[] {
 	for (const eraSection of eraSections) {
 		const eraMatch = eraSection.match(/^== (\w+) Doctor.* ==/m);
 		if (!eraMatch) continue;
-		const eraId = ordinalWordToNumber(eraMatch[1]);
+		const eraName = eraMatch[1];
+		if (!eraName) continue;
+		const eraId = ordinalWordToNumber(eraName);
 		if (!eraId) continue;
 
 		// Only split on Season/Series subsections; specials/other headings stay
@@ -64,7 +79,9 @@ export function parseSeasons(wikitext: string): SeasonData[] {
 			);
 			if (!headingMatch) continue;
 
-			const parsed = parseSeasonHeading(headingMatch[1]);
+			const heading = headingMatch[1];
+			if (!heading) continue;
+			const parsed = parseSeasonHeading(heading);
 			if (!parsed) continue;
 
 			// Transitional seasons appear under two Doctors; keep the first (earlier) era

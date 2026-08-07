@@ -23,8 +23,12 @@ async function main() {
 		const page = p as {
 			revisions: Array<{ slots: { main: { "*": string } } }>;
 		};
-		return page.revisions[0].slots.main["*"];
+		const revision = page.revisions[0];
+		if (!revision) throw new Error("No revision found in wiki page");
+		return revision.slots.main["*"];
 	})[0];
+
+	if (!wikitext) throw new Error("No wikitext found in parsed page");
 
 	const seasons = parseSeasons(wikitext);
 

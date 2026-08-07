@@ -5,10 +5,7 @@
     "moduleResolution": "bundler",
     "noEmit": true,
     "strict": true,
-    // "noUncheckedIndexedAccess": true, // TODO(cleanup): surfaces ~60 real errors in seeds/*-parser.ts
-    // (regex match groups / array destructuring assumed present) and src/basic/BaseRepository.ts +
-    // episode/season repositories (rows[0] from a count query assumed present). Needs a dedicated
-    // fix pass with real guards (no `!`, per CLAUDE.md) rather than bundling into the tsconfig change.
+    "noUncheckedIndexedAccess": true,
     "noImplicitOverride": true,
     "forceConsistentCasingInFileNames": true,
     "esModuleInterop": true,

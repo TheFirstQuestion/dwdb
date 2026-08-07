@@ -241,7 +241,10 @@ describe("parseStories", () => {
 		const classicBaseNumbers = new Set<string>();
 		for (const story of rawStories) {
 			const m = story.wikiNumber.match(/^(\d+)([a-z])$/);
-			if (m && story.isClassic) classicBaseNumbers.add(m[1]);
+			if (m && story.isClassic) {
+				const base = m[1];
+				if (base) classicBaseNumbers.add(base);
+			}
 		}
 
 		// Every base number flagged as classic-style must already be a
