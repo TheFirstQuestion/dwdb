@@ -1,4 +1,5 @@
 import type postgres from "postgres";
+
 import type { RowsWithTotal } from "./Pagination.js";
 
 export abstract class BaseRepository<TRow extends object> {

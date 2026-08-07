@@ -1,14 +1,15 @@
-import { describe, it, expect } from "vitest";
+import { describe, expect, it } from "vitest";
+
 import {
-	extractTitle,
-	extractPartNumber,
-	extractEpisodeCount,
-	extractAirDate,
-	parseStories,
-	parseRawStories,
 	buildEpisodeRows,
+	extractAirDate,
+	extractEpisodeCount,
+	extractPartNumber,
+	extractTitle,
 	NON_MERGING_STORY_GROUPS,
 	type ParsedStory,
+	parseRawStories,
+	parseStories,
 } from "../seeds/episode-parser.js";
 import { loadWikitext } from "./helpers.js";
 

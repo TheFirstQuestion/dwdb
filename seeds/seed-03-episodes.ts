@@ -1,7 +1,8 @@
 import { readFile } from "fs/promises";
-import { join, dirname } from "path";
-import { fileURLToPath } from "url";
+import { dirname, join } from "path";
 import postgres from "postgres";
+import { fileURLToPath } from "url";
+
 import { buildEpisodeRows, parseStories } from "./episode-parser.js";
 
 const WIKI_PAGE = join(

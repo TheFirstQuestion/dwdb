@@ -1,4 +1,5 @@
 import type postgres from "postgres";
+
 import { BaseRepository } from "../../basic/BaseRepository.js";
 import { type SeasonRow } from "./season.schema.js";
 

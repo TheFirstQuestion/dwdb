@@ -1,4 +1,5 @@
-import { Type, type Static } from "@sinclair/typebox";
+import { type Static, Type } from "@sinclair/typebox";
+
 import { paginationQuery } from "../../basic/Pagination.js";
 
 export const Episode = Type.Object({

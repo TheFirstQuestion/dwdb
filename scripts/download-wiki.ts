@@ -1,5 +1,5 @@
-import { writeFile, mkdir, access } from "fs/promises";
-import { join, dirname } from "path";
+import { access, mkdir, writeFile } from "fs/promises";
+import { dirname, join } from "path";
 import { fileURLToPath } from "url";
 
 const WIKI_API = "https://tardis.fandom.com/api.php";

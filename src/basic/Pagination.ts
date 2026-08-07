@@ -1,4 +1,4 @@
-import { Type, type Static, type TSchema } from "@sinclair/typebox";
+import { type Static, type TSchema, Type } from "@sinclair/typebox";
 
 const DEFAULT_PAGE_NUM = 1;
 const DEFAULT_PER_PAGE = 25;

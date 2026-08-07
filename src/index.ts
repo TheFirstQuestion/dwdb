@@ -1,10 +1,11 @@
-import Fastify from "fastify";
 import { TypeBoxTypeProvider } from "@fastify/type-provider-typebox";
-import dbPlugin from "./plugins/db.js";
-import swaggerPlugin from "./plugins/swagger.js";
+import Fastify from "fastify";
+
+import episodesRoutes from "./modules/episodes/episode.routes.js";
 import erasRoutes from "./modules/eras/era.routes.js";
 import seasonsRoutes from "./modules/seasons/season.routes.js";
-import episodesRoutes from "./modules/episodes/episode.routes.js";
+import dbPlugin from "./plugins/db.js";
+import swaggerPlugin from "./plugins/swagger.js";
 
 const fastify = Fastify({
 	logger: true,

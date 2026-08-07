@@ -1,5 +1,5 @@
-import { ordinalWordToNumber } from "./constants.js";
 import { type EraRow } from "../src/modules/eras/era.schema.js";
+import { ordinalWordToNumber } from "./constants.js";
 
 export function extractYears(text: string): number[] {
 	const years: number[] = [];

@@ -1,7 +1,7 @@
-import fp from "fastify-plugin";
 import swagger from "@fastify/swagger";
 import swaggerUi from "@fastify/swagger-ui";
 import type { FastifyPluginAsync } from "fastify";
+import fp from "fastify-plugin";
 
 const swaggerPlugin: FastifyPluginAsync = async (fastify) => {
 	await fastify.register(swagger, {
