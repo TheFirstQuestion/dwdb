@@ -4,6 +4,7 @@ import Fastify from "fastify";
 import episodesRoutes from "./modules/episodes/episode.routes.js";
 import erasRoutes from "./modules/eras/era.routes.js";
 import seasonsRoutes from "./modules/seasons/season.routes.js";
+import corsPlugin from "./plugins/cors.js";
 import dbPlugin from "./plugins/db.js";
 import swaggerPlugin from "./plugins/swagger.js";
 
@@ -11,6 +12,7 @@ const fastify = Fastify({
 	logger: true,
 }).withTypeProvider<TypeBoxTypeProvider>();
 
+await fastify.register(corsPlugin);
 await fastify.register(dbPlugin);
 await fastify.register(swaggerPlugin);
 await fastify.register(erasRoutes);

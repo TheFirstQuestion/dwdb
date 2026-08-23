@@ -30,6 +30,7 @@
 		"frontend:build": "cd frontend && pnpm build"
 	},
 	"dependencies": {
+		"@fastify/cors": "^11.3.0",
 		"@fastify/swagger": "^9.7.0",
 		"@fastify/swagger-ui": "^5.2.6",
 		"@fastify/type-provider-typebox": "^6.1.0",

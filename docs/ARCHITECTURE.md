@@ -52,6 +52,7 @@ TypeBox schemas for every module live in `types/<module>.schema.ts` at the repo 
 
 Registered once in `api/src/index.ts`, before any routes:
 
+- **`cors.ts`** — registers `@fastify/cors`, allowing local dev origins (`http://localhost:3000`, `http://localhost:3001`) so the Nuxt frontend (`frontend/`) can fetch the API in dev without a CORS error. Registered first, before `db`/`swagger`. Local-dev-only for now; a production frontend origin (e.g. GitHub Pages) still needs to be added once one exists.
 - **`db.ts`** — creates the `postgres.Sql` client from `DATABASE_URL`, decorates `fastify.db` so every module's routes can construct a repository, and closes the connection on server shutdown (`onClose` hook).
 - **`swagger.ts`** — registers `@fastify/swagger` (OpenAPI generation from the TypeBox schemas modules already define) and `@fastify/swagger-ui` at `/docs`.
 
