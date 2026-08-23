@@ -68,8 +68,10 @@ Concrete areas known to be out of scope for now but intended eventually:
 
 ## Roadmap direction
 
+> Note to self: consider setting up a session-start hook that surfaces this file automatically.
+
 **Near-term:** finish seeding and API coverage for the core show — eras (done), seasons (done), episodes (in progress), story arcs (not started), TVDB mapping (not started).
 
-**Also near-term:** a codebase setup/cleanup pass — adopt conventional commits, review the ESLint config, and do a manual read-through of the code (not just automated tooling).
+**Also near-term:** a codebase setup/cleanup pass — adopt conventional commits(?), extract reusable schema units (like eraId) extremely rigidly defined to avoid duplication, and do a manual read-through of the code.
 
 **Longer-term:** the items in [Future scope](#future-scope) above, roughly in the order listed.
