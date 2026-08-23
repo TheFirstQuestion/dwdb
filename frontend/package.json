@@ -1,0 +1,38 @@
+{
+	"name": "frontend",
+	"type": "module",
+	"private": true,
+	"packageManager": "pnpm@10.33.0",
+	"scripts": {
+		"build": "nuxt build",
+		"dev": "nuxt dev",
+		"generate": "nuxt generate",
+		"preview": "nuxt preview",
+		"postinstall": "nuxt prepare",
+		"lint": "eslint .",
+		"format": "prettier --write .",
+		"typecheck": "nuxt typecheck"
+	},
+	"dependencies": {
+		"@nuxt/ui": "^4.10.0",
+		"nuxt": "^4.5.2",
+		"tailwindcss": "^4.3.3",
+		"vue": "^3.5.41",
+		"vue-router": "^5.2.0"
+	},
+	"devDependencies": {
+		"@nuxt/eslint": "^1.17.0",
+		"eslint": "^10.8.1",
+		"eslint-config-prettier": "^10.1.8",
+		"prettier": "^3.8.3",
+		"typescript": "^6.0.3",
+		"vue-tsc": "^3.3.10"
+	},
+	"pnpm": {
+		"onlyBuiltDependencies": [
+			"esbuild",
+			"unrs-resolver",
+			"vue-demi"
+		]
+	}
+}

@@ -25,7 +25,9 @@
 		"api:seed:episodes": "dotenv -e .env -- tsx api/seeds/seed-03-episodes.ts",
 		"api:lint": "eslint api/src/ api/seeds/ scripts/ tests/ types/",
 		"api:format": "prettier --write api/src/ api/seeds/ scripts/ tests/ types/",
-		"api:test": "vitest run"
+		"api:test": "vitest run",
+		"frontend:dev": "cd frontend && pnpm dev",
+		"frontend:build": "cd frontend && pnpm build"
 	},
 	"dependencies": {
 		"@fastify/swagger": "^9.7.0",
