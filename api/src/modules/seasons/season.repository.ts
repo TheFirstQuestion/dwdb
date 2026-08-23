@@ -1,7 +1,8 @@
 import type postgres from "postgres";
 
+import { type SeasonRow } from "@/types/seasons.schema.js";
+
 import { BaseRepository } from "../../basic/BaseRepository.js";
-import { type SeasonRow } from "./season.schema.js";
 
 export class SeasonRepository extends BaseRepository<SeasonRow> {
 	constructor(db: postgres.Sql) {

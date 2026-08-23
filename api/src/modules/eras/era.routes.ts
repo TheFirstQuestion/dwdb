@@ -1,9 +1,10 @@
 import type { FastifyPluginAsyncTypebox } from "@fastify/type-provider-typebox";
 import { Type } from "@sinclair/typebox";
 
+import { Era, EraIdParam } from "@/types/eras.schema.js";
+
 import { ErrorMessage } from "../../basic/BasicSchemas.js";
 import { EraRepository } from "./era.repository.js";
-import { Era, EraIdParam } from "./era.schema.js";
 import { EraService } from "./era.service.js";
 
 const erasRoutes: FastifyPluginAsyncTypebox = async (fastify) => {

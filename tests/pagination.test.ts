@@ -4,7 +4,7 @@ import {
 	paginationOffset,
 	resolvePagination,
 	toPaginatedResult,
-} from "../src/basic/Pagination.js";
+} from "../api/src/basic/Pagination.js";
 
 describe("resolvePagination", () => {
 	it("defaults pageNum to 1 and perPage to 25 when omitted", () => {

@@ -6,8 +6,8 @@
 
 
 ########################### Project-specific ###########################
-wiki-data/pages/*.json
-!wiki-data/pages/List_of_Doctor_Who_television_stories.json
+api/wiki-data/pages/*.json
+!api/wiki-data/pages/List_of_Doctor_Who_television_stories.json
 
 ########################### Claude ########################## 
 .mcp.json

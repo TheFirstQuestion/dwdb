@@ -10,7 +10,12 @@
     "forceConsistentCasingInFileNames": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/types/*": ["types/*"],
+      "@/api/*": ["api/src/*"]
+    }
   },
-  "include": ["src", "seeds", "scripts", "tests"]
+  "include": ["api/src", "api/seeds", "scripts", "tests", "types"]
 }

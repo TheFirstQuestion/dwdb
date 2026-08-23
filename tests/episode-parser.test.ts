@@ -10,7 +10,7 @@ import {
 	type ParsedStory,
 	parseRawStories,
 	parseStories,
-} from "../seeds/episode-parser.js";
+} from "../api/seeds/episode-parser.js";
 import { loadWikitext } from "./helpers.js";
 
 const wikitext = loadWikitext();

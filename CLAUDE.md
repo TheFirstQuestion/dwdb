@@ -20,7 +20,7 @@ These are crucial context — read them before making anything more than a minor
 ## Rules
 
 - No TypeScript non-null assertions (`!`). Throw an explicit error or handle the missing value properly.
-- All TypeBox schemas (params, body, response, 404s) must be defined in the module's schema file and imported into routes — no inline `Type.Object({...})` in route handlers.
+- All TypeBox schemas (params, body, response, 404s) live in `types/` as one file per domain concept (e.g. `types/eras.schema.ts`) and are imported into routes/services/repos via the `@/types/*` alias — no inline `Type.Object({...})` in route handlers, and no schema definitions inside `api/src/modules/*/`.
 - Future-proof: never hardcode finite lists of domain entities that will grow as the show continues (e.g. a fixed map of Doctor names). Derive values algorithmically instead.
 - Before committing: code must type-check cleanly (`pnpm build`), lint cleanly (`pnpm lint`), be formatted (`pnpm format`), and all tests must pass (`pnpm test`).
 - Markdown files must lint cleanly (`pnpm lint:md`).

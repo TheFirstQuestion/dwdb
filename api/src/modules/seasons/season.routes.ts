@@ -1,9 +1,14 @@
 import type { FastifyPluginAsyncTypebox } from "@fastify/type-provider-typebox";
 
+import {
+	Season,
+	SeasonIdParam,
+	SeasonQuerystring,
+} from "@/types/seasons.schema.js";
+
 import { ErrorMessage } from "../../basic/BasicSchemas.js";
 import { Paginated, resolvePagination } from "../../basic/Pagination.js";
 import { SeasonRepository } from "./season.repository.js";
-import { Season, SeasonIdParam, SeasonQuerystring } from "./season.schema.js";
 import { SeasonService } from "./season.service.js";
 
 const seasonsRoutes: FastifyPluginAsyncTypebox = async (fastify) => {

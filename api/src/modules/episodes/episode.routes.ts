@@ -1,13 +1,14 @@
 import type { FastifyPluginAsyncTypebox } from "@fastify/type-provider-typebox";
 
-import { ErrorMessage } from "../../basic/BasicSchemas.js";
-import { Paginated, resolvePagination } from "../../basic/Pagination.js";
-import { EpisodeRepository } from "./episode.repository.js";
 import {
 	Episode,
 	EpisodeIdParam,
 	EpisodeQuerystring,
-} from "./episode.schema.js";
+} from "@/types/episodes.schema.js";
+
+import { ErrorMessage } from "../../basic/BasicSchemas.js";
+import { Paginated, resolvePagination } from "../../basic/Pagination.js";
+import { EpisodeRepository } from "./episode.repository.js";
 import { EpisodeService } from "./episode.service.js";
 
 const episodesRoutes: FastifyPluginAsyncTypebox = async (fastify) => {

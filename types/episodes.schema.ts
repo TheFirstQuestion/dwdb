@@ -1,6 +1,6 @@
 import { type Static, Type } from "@sinclair/typebox";
 
-import { paginationQuery } from "../../basic/Pagination.js";
+import { paginationQuery } from "@/api/basic/Pagination.js";
 
 export const Episode = Type.Object({
 	id: Type.Integer({ minimum: 1, description: "Auto-incremented episode ID" }),

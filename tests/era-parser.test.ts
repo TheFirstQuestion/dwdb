@@ -1,6 +1,10 @@
 import { describe, expect, it } from "vitest";
 
-import { extractActor, extractYears, parseEras } from "../seeds/era-parser.js";
+import {
+	extractActor,
+	extractYears,
+	parseEras,
+} from "../api/seeds/era-parser.js";
 import { loadWikitext } from "./helpers.js";
 
 const wikitext = loadWikitext();

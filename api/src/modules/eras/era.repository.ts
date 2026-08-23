@@ -1,7 +1,8 @@
 import type postgres from "postgres";
 
+import { type EraRow } from "@/types/eras.schema.js";
+
 import { BaseRepository } from "../../basic/BaseRepository.js";
-import { type EraRow } from "./era.schema.js";
 
 export class EraRepository extends BaseRepository<EraRow> {
 	constructor(db: postgres.Sql) {

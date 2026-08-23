@@ -5,6 +5,7 @@ import { fileURLToPath } from "url";
 const WIKI_PAGE = join(
 	dirname(fileURLToPath(import.meta.url)),
 	"..",
+	"api",
 	"wiki-data",
 	"pages",
 	"List_of_Doctor_Who_television_stories.json"
