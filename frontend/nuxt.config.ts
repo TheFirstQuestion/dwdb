@@ -56,4 +56,13 @@ export default defineNuxtConfig({
 
 	devtools: { enabled: true },
 	compatibilityDate: "2025-07-15",
+
+	// Locked decision (see temp/frontend-migration-plan.md's Key Decisions
+	// table): this is a client-side-only SPA, not server-rendered — it always
+	// fetches from the API at runtime rather than being pre-rendered. This
+	// also avoids a Nuxt composable-context pitfall: useRuntimeConfig() is
+	// called after an await inside episodes/[id].vue's useAsyncData handler,
+	// which needs SSR's async-context restoration to be safe; ssr: false
+	// removes SSR from the picture entirely.
+	ssr: false,
 });

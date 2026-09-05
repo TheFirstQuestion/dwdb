@@ -61,7 +61,7 @@ Starter set, grouped by persona, describing what the whole API is for — not ju
 
 Concrete areas known to be out of scope for now but intended eventually:
 
-- **Monorepo with a UI package** alongside the API — significant enough to warrant its own design process (package boundaries, tooling, migration steps) rather than being detailed here; see [ARCHITECTURE.md](ARCHITECTURE.md) once that plan exists.
+- **GitHub Pages deployment for the frontend** — the Nuxt app now runs client-side (`ssr: false`), but static-hosting specifics (base path for a project-pages URL, prerendering/generation config) aren't set up yet.
 - **Production credits as people** — writers, directors, producers, showrunners, script editors modeled the same way as actors (the existing `people` entity), just with a different role.
 - **Behind-the-scenes content** (DVD extras, YouTube clips) — linkable to a season, episode, or air date rather than always requiring one specific episode.
 - **Additional mapping layers** beyond TVDB — e.g. browsing by DVD/Blu-ray releases.
@@ -75,3 +75,12 @@ Concrete areas known to be out of scope for now but intended eventually:
 **Also near-term:** a codebase setup/cleanup pass — adopt conventional commits(?), extract reusable schema units (like eraId) extremely rigidly defined to avoid duplication, and do a manual read-through of the code.
 
 **Longer-term:** the items in [Future scope](#future-scope) above, roughly in the order listed.
+
+Quick To Do Dump:
+
+- color scheme for frontend
+- bigger font sizes
+- use the frontend to fix data issues
+  - Paul McGann era years (should be 1996, 2013)
+  - Matt Smith season 6 should be 2011
+- Doctor pages should show specials, in air date order w seasons

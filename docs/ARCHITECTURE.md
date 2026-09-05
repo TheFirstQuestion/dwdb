@@ -4,7 +4,7 @@ Describes the current structure of the repo — what runs, how the pieces fit to
 
 > This is a living document: it should be updated in the same change that alters module structure, `api/src/basic/`, or `api/src/plugins/` — not left to drift from the code it describes.
 
-This document describes the codebase **as it exists today**: the Fastify app lives under `api/`, with shared TypeBox schemas centralized in `types/` at the repo root so a future frontend package can import the same schema types. A full monorepo split (an actual UI package alongside `api/`) is a stated future goal — see [GOALS.md](GOALS.md#future-scope) — but doesn't exist yet.
+This document describes the codebase **as it exists today**: the Fastify app lives under `api/`, with shared TypeBox schemas centralized in `types/` at the repo root so both the API and the `frontend/` package can import the same schema types. A Nuxt 4 frontend lives alongside it under `frontend/` — see the "Frontend (`frontend/`)" section below.
 
 ## Overview
 
@@ -49,6 +49,25 @@ The module's TypeBox schemas live outside this three-file set — see "Shared sc
 TypeBox schemas for every module live in `types/<module>.schema.ts` at the repo root (e.g. `types/episodes.schema.ts`), not alongside the module's other files under `api/src/modules/<name>/`. They're centralized here specifically so a future frontend package can import the same schema types the API uses, without depending on `api/`'s internals. Modules import their schemas via the `@/types/*` path alias (e.g. `import { Episode } from '@/types/episodes.schema.js'`) into `<name>.routes.ts` and `<name>.repository.ts`.
 
 `types/pagination.schema.ts` holds the shared request-side pagination pieces (`paginationQuery`, `pageNumSchema`, `perPageSchema`, and their defaults) that both the module querystring schemas (via `Type.Composite([paginationQuery, ...])`) and `api/src/basic/Pagination.ts` depend on. This keeps the dependency direction one-way — `api/src/` depends on `types/`, never the reverse — so `types/` stays genuinely importable by a future frontend without pulling in API internals.
+
+## Frontend (`frontend/`)
+
+A Nuxt 4 + Vue 3 + NuxtUI single-page app. Routes are file-based under
+`frontend/app/pages/`, mirroring the data hierarchy the API exposes:
+
+- `index.vue` — list of eras.
+- `eras/[id].vue` — seasons for one era.
+- `seasons/[id].vue` — episodes for one season.
+- `episodes/[id].vue` — a single episode's detail.
+
+`frontend/app/utils/api.ts` is the single seam through which every page
+talks to the API — a thin typed `fetch` wrapper (`apiClient`) with one
+method per API route, typed against the same `types/*.schema.ts` files
+the API itself uses. Pages never call `fetch` directly.
+
+Nuxt's `alias` config (`frontend/nuxt.config.ts`) resolves `@/types` to
+the root `types/` directory so frontend code can `import type` from the
+same schema files as the API, without duplicating type definitions.
 
 ## Plugins (`api/src/plugins/`)
 
