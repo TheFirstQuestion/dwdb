@@ -1,6 +1,6 @@
 import { type Static, Type } from "@sinclair/typebox";
 
-import { paginationQuery } from "@/api/basic/Pagination.js";
+import { paginationQuery } from "./pagination.schema.js";
 
 export const Season = Type.Object({
 	id: Type.Integer({ minimum: 1, description: "Auto-incremented season ID" }),

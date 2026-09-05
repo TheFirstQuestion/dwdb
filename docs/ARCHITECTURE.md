@@ -19,7 +19,7 @@ Every module builds on four shared pieces:
 - **`BaseRepository<TRow>`** — generic CRUD over a single table (`findAll`, `findById`, `findAllPaginated`). Modules extend it and `override` methods when they need joins (e.g. `EraRepository` joins `people` for the actor name) or filters (e.g. `EpisodeRepository` filters by `era_id`/`season_id`).
 - **`BaseService<TRepo>`** — thin wrapper holding a repository instance; modules extend it to add pagination/response-shaping logic on top of raw repository results.
 - **`BasicSchemas.ts`** — shared response schemas, currently just `ErrorMessage` (`{ error: string }`) for 404s.
-- **`Pagination.ts`** — the pagination contract used everywhere: `paginationQuery` (TypeBox schema for `pageNum`/`perPage` query params), `resolvePagination` (applies defaults), `paginationOffset`, `toPaginatedResult`, and `Paginated(item)` (wraps a TypeBox schema in the `{ data, total, pageNum, perPage, totalPages }` envelope used by every list endpoint).
+- **`Pagination.ts`** — the pagination contract used everywhere: `resolvePagination` (applies defaults), `paginationOffset`, `toPaginatedResult`, and `Paginated(item)` (wraps a TypeBox schema in the `{ data, total, pageNum, perPage, totalPages }` envelope used by every list endpoint). The request-side querystring schema (`paginationQuery`) lives in `types/pagination.schema.ts` instead — see "Shared schemas (`types/`)" below — since schema files under `types/` need it too; `Pagination.ts` imports the pieces it needs (`pageNumSchema`, `perPageSchema`, `PaginationQuery`) from there.
 
 A module can be understood without reading `api/src/basic/` internals — the contract is "extend `BaseRepository`/`BaseService`, override what's table-specific." Changing internals of the base classes (e.g. how pagination counts are computed) doesn't require touching module code, as long as the method signatures hold.
 
@@ -47,6 +47,8 @@ The module's TypeBox schemas live outside this three-file set — see "Shared sc
 ## Shared schemas (`types/`)
 
 TypeBox schemas for every module live in `types/<module>.schema.ts` at the repo root (e.g. `types/episodes.schema.ts`), not alongside the module's other files under `api/src/modules/<name>/`. They're centralized here specifically so a future frontend package can import the same schema types the API uses, without depending on `api/`'s internals. Modules import their schemas via the `@/types/*` path alias (e.g. `import { Episode } from '@/types/episodes.schema.js'`) into `<name>.routes.ts` and `<name>.repository.ts`.
+
+`types/pagination.schema.ts` holds the shared request-side pagination pieces (`paginationQuery`, `pageNumSchema`, `perPageSchema`, and their defaults) that both the module querystring schemas (via `Type.Composite([paginationQuery, ...])`) and `api/src/basic/Pagination.ts` depend on. This keeps the dependency direction one-way — `api/src/` depends on `types/`, never the reverse — so `types/` stays genuinely importable by a future frontend without pulling in API internals.
 
 ## Plugins (`api/src/plugins/`)
 

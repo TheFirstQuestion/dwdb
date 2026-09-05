@@ -1,27 +1,12 @@
-import { type Static, type TSchema, Type } from "@sinclair/typebox";
+import { type TSchema, Type } from "@sinclair/typebox";
 
-const DEFAULT_PAGE_NUM = 1;
-const DEFAULT_PER_PAGE = 25;
-
-const pageNumSchema = Type.Integer({
-	minimum: 1,
-	default: DEFAULT_PAGE_NUM,
-	description: "Page number (1-indexed)",
-});
-const perPageSchema = Type.Integer({
-	minimum: 1,
-	maximum: 100,
-	default: DEFAULT_PER_PAGE,
-	description: "Items per page",
-});
-
-// Request-side: caller may omit either field and get the default.
-export const paginationQuery = Type.Object({
-	pageNum: Type.Optional(pageNumSchema),
-	perPage: Type.Optional(perPageSchema),
-});
-
-export type PaginationQuery = Static<typeof paginationQuery>;
+import {
+	DEFAULT_PAGE_NUM,
+	DEFAULT_PER_PAGE,
+	pageNumSchema,
+	type PaginationQuery,
+	perPageSchema,
+} from "@/types/pagination.schema.js";
 
 // Resolved values used by services/repositories once defaults are applied.
 export interface PaginationParams {
