@@ -57,9 +57,13 @@ export const apiClient = {
 
 	getEra: (id: number) => request<EraRow>(`/eras/${id}`),
 
-	getSeasons: (eraId: number, pagination: PaginationParams = {}) =>
+	getSeasons: (eraId?: number, pagination: PaginationParams = {}) =>
 		request<Paginated<SeasonRow>>(
-			`/seasons${buildQuery({ era_id: eraId, ...pagination })}`
+			`/seasons${buildQuery({
+				era_id: eraId,
+				pageNum: pagination.pageNum,
+				perPage: pagination.perPage,
+			})}`
 		),
 
 	getEpisodes: (
