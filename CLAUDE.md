@@ -26,6 +26,7 @@ These are crucial context — read them before making anything more than a minor
 - Markdown files must lint cleanly (`pnpm lint:md`).
 - Before committing any change to `api/migrations/` or `api/seeds/`: `pnpm api:migrate:up` and `pnpm api:migrate:down` must both succeed without error, and `pnpm api:seed` must run successfully against the freshly migrated database.
 - `docs/ARCHITECTURE.md` and `docs/DATA_PIPELINE.md` are living documents. Any change touching module structure, `api/src/basic/`, `api/src/plugins/`, migrations, or the seed/parser pipeline must update the relevant doc in the same change.
+- Frontend: don't fake a dynamic CSS value (e.g. a configurable grid column count) through a hardcoded Tailwind class-name enumeration or a CSS-variable-inside-a-Tailwind-arbitrary-value trick. Use plain component props with Vue's native `v-bind()` inside a `<style scoped>` block instead — see `frontend/app/components/page/PageGrid.vue` for the pattern.
 
 ## Seeding
 
