@@ -1,15 +1,22 @@
 import { type Static, Type } from "@sinclair/typebox";
 
-import { paginationQuery } from "./pagination.schema.js";
+import { eraIdSchema } from "./eras.schema.js";
+import { paginationQuery } from "./util/pagination.schema.js";
+
+export const seasonIdSchema = Type.Integer({
+	minimum: 1,
+	description: "Auto-incremented season ID",
+});
+export const SeasonIdParam = Type.Object({
+	id: seasonIdSchema,
+});
 
 export const Season = Type.Object({
-	id: Type.Integer({ minimum: 1, description: "Auto-incremented season ID" }),
-	era_id: Type.Integer({
-		minimum: 1,
-		description: "Doctor era this season belongs to",
-	}),
+	id: seasonIdSchema,
+	era_id: eraIdSchema,
 	number: Type.Integer({
 		minimum: 1,
+		// TODO: unclear
 		description: "Season number within its era type (Classic or Modern)",
 	}),
 	name: Type.String({
@@ -20,18 +27,11 @@ export const Season = Type.Object({
 		description: "Year the season first aired",
 	}),
 });
-
 export type SeasonRow = Static<typeof Season>;
-
-export const SeasonIdParam = Type.Object({
-	id: Type.Integer({ minimum: 1, description: "Season ID" }),
-});
 
 export const SeasonQuerystring = Type.Composite([
 	paginationQuery,
 	Type.Object({
-		era_id: Type.Optional(
-			Type.Integer({ minimum: 1, description: "Filter by Doctor era" })
-		),
+		era_id: Type.Optional(eraIdSchema),
 	}),
 ]);

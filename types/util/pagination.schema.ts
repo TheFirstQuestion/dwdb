@@ -8,6 +8,7 @@ export const pageNumSchema = Type.Integer({
 	default: DEFAULT_PAGE_NUM,
 	description: "Page number (1-indexed)",
 });
+
 export const perPageSchema = Type.Integer({
 	minimum: 1,
 	maximum: 100,
@@ -20,5 +21,4 @@ export const paginationQuery = Type.Object({
 	pageNum: Type.Optional(pageNumSchema),
 	perPage: Type.Optional(perPageSchema),
 });
-
 export type PaginationQuery = Static<typeof paginationQuery>;
