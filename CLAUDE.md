@@ -20,28 +20,33 @@ These are crucial context — read them before making anything more than a minor
 ## Rules
 
 - No TypeScript non-null assertions (`!`). Throw an explicit error or handle the missing value properly.
-- All TypeBox schemas (params, body, response, 404s) must be defined in the module's schema file and imported into routes — no inline `Type.Object({...})` in route handlers.
+- All TypeBox schemas (params, body, response, 404s) live in `types/` as one file per domain concept (e.g. `types/eras.schema.ts`) and are imported into routes/services/repos via the `@/types/*` alias — no inline `Type.Object({...})` in route handlers, and no schema definitions inside `api/src/modules/*/`.
 - Future-proof: never hardcode finite lists of domain entities that will grow as the show continues (e.g. a fixed map of Doctor names). Derive values algorithmically instead.
 - Before committing: code must type-check cleanly (`pnpm build`), lint cleanly (`pnpm lint`), be formatted (`pnpm format`), and all tests must pass (`pnpm test`).
 - Markdown files must lint cleanly (`pnpm lint:md`).
-- Before committing any change to `migrations/` or `seeds/`: `pnpm migrate:up` and `pnpm migrate:down` must both succeed without error, and `pnpm seed` must run successfully against the freshly migrated database.
-- `docs/ARCHITECTURE.md` and `docs/DATA_PIPELINE.md` are living documents. Any change touching module structure, `src/basic/`, `src/plugins/`, migrations, or the seed/parser pipeline must update the relevant doc in the same change.
+- Before committing any change to `api/migrations/` or `api/seeds/`: `pnpm api:migrate:up` and `pnpm api:migrate:down` must both succeed without error, and `pnpm api:seed` must run successfully against the freshly migrated database.
+- `docs/ARCHITECTURE.md` and `docs/DATA_PIPELINE.md` are living documents. Any change touching module structure, `api/src/basic/`, `api/src/plugins/`, migrations, or the seed/parser pipeline must update the relevant doc in the same change.
+- Frontend: don't fake a dynamic CSS value (e.g. a configurable grid column count) through a hardcoded Tailwind class-name enumeration or a CSS-variable-inside-a-Tailwind-arbitrary-value trick. Use plain component props with Vue's native `v-bind()` inside a `<style scoped>` block instead — see `frontend/app/components/page/PageGrid.vue` for the pattern.
 
 ## Seeding
 
 Run in order — each step depends on the previous:
 
 ```sh
-pnpm migrate:up     # apply all migrations
-pnpm seed           # run all seed-NN-*.ts scripts in seeds/ in order
+pnpm api:migrate:up     # apply all migrations
+pnpm api:seed           # run all seed-NN-*.ts scripts in api/seeds/ in order
 ```
 
-Individual seeds (run standalone if needed): `pnpm seed:eras`, `pnpm seed:seasons`
+Individual seeds (run standalone if needed): `pnpm api:seed:eras`, `pnpm api:seed:seasons`
 
-To add a new seed: create `seeds/seed-NN-name.ts` — it runs automatically in numeric order.
+To add a new seed: create `api/seeds/seed-NN-name.ts` — it runs automatically in numeric order.
 
-Source data: `wiki-data/pages/List_of_Doctor_Who_television_stories.json`
-Download with `pnpm wiki:download` (or `pnpm wiki:download:test` for a 50-page sample).
+Source data: `api/wiki-data/pages/List_of_Doctor_Who_television_stories.json`
+Download with `pnpm api:wiki:download` (or `pnpm api:wiki:download:test` for a 50-page sample).
+
+## Development servers
+
+Never start `pnpm api:dev` or `pnpm frontend:dev` (or any long-running dev server) yourself. The user always runs both in their own terminals. If you need to verify a change against a live server, ask the user to confirm it's running, or use one-off commands (`curl`, `pnpm api:build`, `pnpm typecheck`) instead.
 
 ## Data conventions
 

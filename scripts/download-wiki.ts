@@ -6,6 +6,7 @@ const WIKI_API = "https://tardis.fandom.com/api.php";
 const OUTPUT_DIR = join(
 	dirname(fileURLToPath(import.meta.url)),
 	"..",
+	"api",
 	"wiki-data",
 	"pages"
 );

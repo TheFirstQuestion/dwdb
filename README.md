@@ -85,11 +85,17 @@ These instructions will get you a copy of the project up and running.
    npm run migrate:up
    ```
 
-6. Start the dev server
+6. Start the dev servers
 
    ```sh
-   npm run dev
+   pnpm frontend:dev
+   pnpm api:dev
    ```
+
+7. Key links
+
+  <http://127.0.0.1:3000/docs> for Swagger/OpenAPI spec
+  <http://localhost:3001/> for frontend
 
 [Back to top](#dwdb)
 

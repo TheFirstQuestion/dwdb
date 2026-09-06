@@ -10,7 +10,7 @@ import {
 	type ParsedStory,
 	parseRawStories,
 	parseStories,
-} from "../seeds/episode-parser.js";
+} from "../api/seeds/episode-parser.js";
 import { loadWikitext } from "./helpers.js";
 
 const wikitext = loadWikitext();
@@ -171,7 +171,7 @@ describe("parseStories", () => {
 		expect(stories.length).toBeGreaterThan(300);
 	});
 
-	it("classic stories have episodeCount > 1 (An Unearthly Child has 4, The Daleks has 7)", () => {
+	it("classic stories have episodeCount > 1 (The Daleks has 7)", () => {
 		const daleks = stories.find((s) => s.title === "The Daleks");
 		expect(daleks?.episodeCount).toBe(7);
 	});
@@ -183,6 +183,7 @@ describe("parseStories", () => {
 		expect(classicEpisodes).toBeGreaterThan(600);
 	});
 
+	// TODO: bad test
 	it("modern stories each have episodeCount of 1, except recognized multi-part stories", () => {
 		const modernMultiEp = stories.filter(
 			(s) => s.eraId >= 9 && s.episodeCount > 1
@@ -192,7 +193,7 @@ describe("parseStories", () => {
 		);
 	});
 
-	it("merges lettered two-part story 311a/311b into a single story with per-part titles", () => {
+	it("merges lettered two-part story 311a/311b ('The Legend of Ruby Sunday'/'Empire of Death') into a single story with per-part titles", () => {
 		const merged = stories.find((s) => s.wikiNumber === "311");
 		expect(merged).toMatchObject({
 			title: "The Legend of Ruby Sunday",

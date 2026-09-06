@@ -4,7 +4,7 @@ import {
 	extractFirstYear,
 	parseSeasonHeading,
 	parseSeasons,
-} from "../seeds/season-parser.js";
+} from "../api/seeds/season-parser.js";
 import { loadWikitext } from "./helpers.js";
 
 const wikitext = loadWikitext();

@@ -1,0 +1,41 @@
+interface NumberWords {
+	noun: string;
+	positional: string;
+}
+
+const numbersToWords: Record<number, NumberWords> = {
+	0: { noun: "zero", positional: "zeroth" },
+	1: { noun: "one", positional: "first" },
+	2: { noun: "two", positional: "second" },
+	3: { noun: "three", positional: "third" },
+	4: { noun: "four", positional: "fourth" },
+	5: { noun: "five", positional: "fifth" },
+	6: { noun: "six", positional: "sixth" },
+	7: { noun: "seven", positional: "seventh" },
+	8: { noun: "eight", positional: "eighth" },
+	9: { noun: "nine", positional: "ninth" },
+	10: { noun: "ten", positional: "tenth" },
+	11: { noun: "eleven", positional: "eleventh" },
+	12: { noun: "twelve", positional: "twelfth" },
+	13: { noun: "thirteen", positional: "thirteenth" },
+	14: { noun: "fourteen", positional: "fourteenth" },
+	15: { noun: "fifteen", positional: "fifteenth" },
+	16: { noun: "sixteen", positional: "sixteenth" },
+	17: { noun: "seventeen", positional: "seventeenth" },
+	18: { noun: "eighteen", positional: "eighteenth" },
+	19: { noun: "nineteen", positional: "nineteenth" },
+	20: { noun: "twenty", positional: "twentieth" },
+};
+
+// Doctor numbers are small today, but this table needs a new row whenever a
+// Doctor's number exceeds it (e.g. a new incarnation past Twentieth) --
+// throwing here makes that obvious instead of silently mislabeling the page.
+export function ordinalWord(n: number): string {
+	const words = numbersToWords[n];
+	if (!words) {
+		throw new Error(
+			`No ordinal word defined for ${n}; add an entry to numbersToWords in utils/numbers.ts`
+		);
+	}
+	return words.positional;
+}
