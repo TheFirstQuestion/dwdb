@@ -60,10 +60,14 @@ A Nuxt 4 + Vue 3 + NuxtUI single-page app. Routes are file-based under
 - `seasons/[id].vue` — episodes for one season.
 - `episodes/[id].vue` — a single episode's detail.
 
-`frontend/app/utils/api.ts` is the single seam through which every page
-talks to the API — a thin typed `fetch` wrapper (`apiClient`) with one
-method per API route, typed against the same `types/*.schema.ts` files
-the API itself uses. Pages never call `fetch` directly.
+`frontend/app/utils/` is the seam through which every page talks to the
+API. `api-request.ts` holds the shared low-level pieces — `request<T>()`
+(a thin wrapper around Nuxt's `$fetch`), the `ApiError` class it throws on
+non-2xx responses, and the `Paginated<T>` envelope type. `eras-api.ts`,
+`seasons-api.ts`, and `episodes-api.ts` each export one plain function per
+API route (e.g. `getEras`, `getSeason`), typed against the same
+`types/*.schema.ts` files the API itself uses. Pages never call `fetch`
+directly.
 
 Nuxt's `alias` config (`frontend/nuxt.config.ts`) resolves `@/types` to
 the root `types/` directory so frontend code can `import type` from the

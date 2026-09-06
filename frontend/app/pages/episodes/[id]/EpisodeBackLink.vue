@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import type { EpisodeRow } from "@/types/episodes.schema.js";
-import type { SeasonRow } from "@/types/seasons.schema.js";
+import type { Episode } from "@/types/episodes.schema.js";
+import type { Season } from "@/types/seasons.schema.js";
 
 defineProps<{
-	episode: EpisodeRow;
-	season?: SeasonRow;
+	episode: Episode;
+	season?: Season;
 }>();
 </script>
 

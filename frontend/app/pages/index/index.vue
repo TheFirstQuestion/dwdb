@@ -1,17 +1,14 @@
 <script setup lang="ts">
 import EraTableItem from "./EraTableItem.vue";
+import { getEras } from "~/api/eras-api.ts";
 
 const {
 	data: eras,
 	status: erasStatus,
 	error: erasError,
-} = useAsyncData(
-	"eras",
-	async () => {
-		return apiClient.getEras();
-	},
-	{ lazy: true }
-);
+} = useLazyAsyncData("eras", async () => {
+	return getEras();
+});
 </script>
 
 <template>

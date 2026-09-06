@@ -1,12 +1,12 @@
 import type { FastifyPluginAsyncTypebox } from "@fastify/type-provider-typebox";
 
 import {
-	Season,
-	SeasonIdParam,
+	season,
+	seasonIdParam,
 	SeasonQuerystring,
 } from "@/types/seasons.schema.js";
 
-import { ErrorMessage } from "../../basic/BasicSchemas.js";
+import { errorMessage } from "../../basic/BasicSchemas.js";
 import { Paginated, resolvePagination } from "../../basic/Pagination.js";
 import { SeasonRepository } from "./season.repository.js";
 import { SeasonService } from "./season.service.js";
@@ -21,7 +21,7 @@ const seasonsRoutes: FastifyPluginAsyncTypebox = async (fastify) => {
 				tags: ["seasons"],
 				description: "List all seasons, optionally filtered by Doctor era",
 				querystring: SeasonQuerystring,
-				response: { 200: Paginated(Season) },
+				response: { 200: Paginated(season) },
 			},
 		},
 		async (request) => {
@@ -36,10 +36,10 @@ const seasonsRoutes: FastifyPluginAsyncTypebox = async (fastify) => {
 			schema: {
 				tags: ["seasons"],
 				description: "Get a single season by ID",
-				params: SeasonIdParam,
+				params: seasonIdParam,
 				response: {
-					200: Season,
-					404: ErrorMessage,
+					200: season,
+					404: errorMessage,
 				},
 			},
 		},

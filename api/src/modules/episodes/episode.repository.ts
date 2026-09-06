@@ -1,10 +1,10 @@
 import type postgres from "postgres";
 
-import { type EpisodeRow } from "@/types/episodes.schema.js";
+import { type Episode } from "@/types/episodes.schema.js";
 
 import { BaseRepository } from "../../basic/BaseRepository.js";
 
-export class EpisodeRepository extends BaseRepository<EpisodeRow> {
+export class EpisodeRepository extends BaseRepository<Episode> {
 	constructor(db: postgres.Sql) {
 		super(db, "episodes");
 	}
@@ -14,7 +14,7 @@ export class EpisodeRepository extends BaseRepository<EpisodeRow> {
 		offset: number;
 		eraId?: number;
 		seasonId?: number;
-	}): Promise<{ rows: EpisodeRow[]; total: number }> {
+	}): Promise<{ rows: Episode[]; total: number }> {
 		const { eraId, seasonId, limit, offset } = options;
 
 		const filters = [];
@@ -24,7 +24,7 @@ export class EpisodeRepository extends BaseRepository<EpisodeRow> {
 			? this.db`WHERE ${filters.reduce((acc, f) => this.db`${acc} AND ${f}`)}`
 			: this.db``;
 
-		const rows = await this.db<EpisodeRow[]>`
+		const rows = await this.db<Episode[]>`
       SELECT id, story_id, era_id, season_id, title,
              air_date::text AS air_date, part_number
       FROM episodes
@@ -42,8 +42,8 @@ export class EpisodeRepository extends BaseRepository<EpisodeRow> {
 		return { rows, total: Number(count) };
 	}
 
-	override async findById(id: number): Promise<EpisodeRow | null> {
-		const [episode] = await this.db<EpisodeRow[]>`
+	override async findById(id: number): Promise<Episode | null> {
+		const [episode] = await this.db<Episode[]>`
       SELECT id, story_id, era_id, season_id, title,
              air_date::text AS air_date, part_number
       FROM episodes

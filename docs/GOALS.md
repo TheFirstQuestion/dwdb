@@ -68,6 +68,8 @@ Concrete areas known to be out of scope for now but intended eventually:
 
 ## Roadmap direction
 
+Very next thing to do: clean up, rename, refactor the code
+
 > Note to self: consider setting up a session-start hook that surfaces this file automatically.
 
 **Near-term:** finish seeding and API coverage for the core show — eras (done), seasons (done), episodes (in progress), story arcs (not started), TVDB mapping (not started).
@@ -80,7 +82,7 @@ Quick To Do Dump:
 
 - color scheme for frontend
 - bigger font sizes
-- use the frontend to fix data issues
-  - Paul McGann era years (should be 1996, 2013)
-  - Matt Smith season 6 should be 2011
+- syntax highlighting, autoformatting for frontend
 - Doctor pages should show specials, in air date order w seasons
+- use the frontend to fix data issues
+- frontend should use same config as whole project

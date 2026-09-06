@@ -1,5 +1,6 @@
-import { Type } from "@sinclair/typebox";
+import { type Static, Type } from "@sinclair/typebox";
 
-export const ErrorMessage = Type.Object({
+export const errorMessage = Type.Object({
 	error: Type.String(),
 });
+export type ErrorMessage = Static<typeof errorMessage>;

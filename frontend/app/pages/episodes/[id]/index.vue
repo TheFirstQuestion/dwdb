@@ -1,19 +1,22 @@
 <script setup lang="ts">
 import { capitalize } from "vue";
 import EpisodeBackLink from "./EpisodeBackLink.vue";
+import { getEpisode } from "~/api/episodes-api.ts";
+import { getEra } from "~/api/eras-api.ts";
+import { getSeason } from "~/api/seasons-api.ts";
+import { ordinalWord } from "~/utils/numbers.ts";
+import { useRouteId } from "~/utils/route.ts";
 
-const route = useRoute();
-const episodeId = Number(route.params.id);
+const episodeId = useRouteId();
 
-const { data, status, error } = await useAsyncData(
+const { data, status, error } = await useLazyAsyncData(
 	`episode-${episodeId}`,
 	async () => {
-		const episode = await apiClient.getEpisode(episodeId);
+		const episode = await getEpisode(episodeId);
+
 		const [era, season] = await Promise.all([
-			apiClient.getEra(episode.era_id),
-			episode.season_id !== null
-				? apiClient.getSeason(episode.season_id)
-				: Promise.resolve(undefined),
+			getEra(episode.era_id),
+			getSeason(episode.season_id),
 		]);
 		return { episode, era, season };
 	}
@@ -55,10 +58,12 @@ const { data, status, error } = await useAsyncData(
 				<template #header>
 					<h2 class="text-xl font-semibold">Season</h2>
 				</template>
+
 				<template v-if="data.season">
 					<p class="font-semibold">{{ data.season.name }}</p>
 					<p class="text-muted text-sm">{{ data.season.year }}</p>
 				</template>
+
 				<p v-else class="text-muted text-sm">No season on record.</p>
 			</UCard>
 		</div>

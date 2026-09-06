@@ -6,7 +6,7 @@ import {
 	pageNumSchema,
 	type PaginationQuery,
 	perPageSchema,
-} from "@/types/pagination.schema.js";
+} from "@/types/util/pagination.schema.js";
 
 // Resolved values used by services/repositories once defaults are applied.
 export interface PaginationParams {

@@ -6,11 +6,11 @@ export const eraIdSchema = Type.Integer({
 		"Canonical Doctor number (e.g. 1=Hartnell, 10=Tennant, 14=Tennant)",
 });
 
-export const EraIdParam = Type.Object({
+export const eraIdParam = Type.Object({
 	id: eraIdSchema,
 });
 
-export const Era = Type.Object({
+export const era = Type.Object({
 	id: eraIdSchema,
 	actor: Type.String({
 		description: "Name of the actor who played the Doctor in this era",
@@ -29,4 +29,4 @@ export const Era = Type.Object({
 		}
 	),
 });
-export type EraRow = Static<typeof Era>;
+export type Era = Static<typeof era>;

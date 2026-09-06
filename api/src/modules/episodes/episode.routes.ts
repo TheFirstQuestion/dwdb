@@ -1,12 +1,12 @@
 import type { FastifyPluginAsyncTypebox } from "@fastify/type-provider-typebox";
 
 import {
-	Episode,
-	EpisodeIdParam,
+	episode,
+	episodeIdParam,
 	EpisodeQuerystring,
 } from "@/types/episodes.schema.js";
 
-import { ErrorMessage } from "../../basic/BasicSchemas.js";
+import { errorMessage } from "../../basic/BasicSchemas.js";
 import { Paginated, resolvePagination } from "../../basic/Pagination.js";
 import { EpisodeRepository } from "./episode.repository.js";
 import { EpisodeService } from "./episode.service.js";
@@ -21,7 +21,7 @@ const episodesRoutes: FastifyPluginAsyncTypebox = async (fastify) => {
 				tags: ["episodes"],
 				description: "List all episodes, optionally filtered by era or season",
 				querystring: EpisodeQuerystring,
-				response: { 200: Paginated(Episode) },
+				response: { 200: Paginated(episode) },
 			},
 		},
 		async (request) => {
@@ -40,10 +40,10 @@ const episodesRoutes: FastifyPluginAsyncTypebox = async (fastify) => {
 			schema: {
 				tags: ["episodes"],
 				description: "Get a single episode by ID",
-				params: EpisodeIdParam,
+				params: episodeIdParam,
 				response: {
-					200: Episode,
-					404: ErrorMessage,
+					200: episode,
+					404: errorMessage,
 				},
 			},
 		},

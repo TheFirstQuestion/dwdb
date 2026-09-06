@@ -7,11 +7,11 @@ export const seasonIdSchema = Type.Integer({
 	minimum: 1,
 	description: "Auto-incremented season ID",
 });
-export const SeasonIdParam = Type.Object({
+export const seasonIdParam = Type.Object({
 	id: seasonIdSchema,
 });
 
-export const Season = Type.Object({
+export const season = Type.Object({
 	id: seasonIdSchema,
 	era_id: eraIdSchema,
 	number: Type.Integer({
@@ -27,7 +27,7 @@ export const Season = Type.Object({
 		description: "Year the season first aired",
 	}),
 });
-export type SeasonRow = Static<typeof Season>;
+export type Season = Static<typeof season>;
 
 export const SeasonQuerystring = Type.Composite([
 	paginationQuery,
@@ -35,3 +35,4 @@ export const SeasonQuerystring = Type.Composite([
 		era_id: Type.Optional(eraIdSchema),
 	}),
 ]);
+export type SeasonQuerystringParams = Static<typeof SeasonQuerystring>;

@@ -1,17 +1,23 @@
 <script setup lang="ts">
 import { capitalize } from "vue";
 import SeasonCard from "./SeasonTableItem.vue";
+import { getEra } from "~/api/eras-api.ts";
+import { getSeasons } from "~/api/seasons-api.ts";
+import { ordinalWord } from "~/utils/numbers.ts";
+import { useRouteId } from "~/utils/route.ts";
 
-const route = useRoute();
-const eraId = Number(route.params.id);
+const eraId = useRouteId();
 
-const { data, status, error } = await useAsyncData(`era-${eraId}`, async () => {
-	const [era, seasonsResponse] = await Promise.all([
-		apiClient.getEra(eraId),
-		apiClient.getSeasons({ eraId }),
-	]);
-	return { era, seasons: seasonsResponse.data };
-});
+const { data, status, error } = await useLazyAsyncData(
+	`era-${eraId}`,
+	async () => {
+		const [era, seasonsResponse] = await Promise.all([
+			getEra(eraId),
+			getSeasons({ era_id: eraId }),
+		]);
+		return { era, seasons: seasonsResponse?.data };
+	}
+);
 </script>
 
 <template>
@@ -33,6 +39,7 @@ const { data, status, error } = await useAsyncData(`era-${eraId}`, async () => {
 			<h2 class="text-xl font-semibold mb-4">Seasons</h2>
 
 			<PageGrid
+				v-if="data.seasons"
 				:items="data.seasons"
 				:grid-cols="1"
 				:sm-grid-cols="1"

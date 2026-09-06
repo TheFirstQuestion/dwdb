@@ -1,16 +1,16 @@
 import type postgres from "postgres";
 
-import { type EraRow } from "@/types/eras.schema.js";
+import { type Era } from "@/types/eras.schema.js";
 
 import { BaseRepository } from "../../basic/BaseRepository.js";
 
-export class EraRepository extends BaseRepository<EraRow> {
+export class EraRepository extends BaseRepository<Era> {
 	constructor(db: postgres.Sql) {
 		super(db, "eras");
 	}
 
-	override async findAll(): Promise<EraRow[]> {
-		return this.db<EraRow[]>`
+	override async findAll(): Promise<Era[]> {
+		return this.db<Era[]>`
       SELECT e.id, p.name AS actor, e.start_year, e.end_year
       FROM eras e
       JOIN people p ON p.id = e.actor_id
@@ -18,8 +18,8 @@ export class EraRepository extends BaseRepository<EraRow> {
     `;
 	}
 
-	override async findById(id: number): Promise<EraRow | null> {
-		const [era] = await this.db<EraRow[]>`
+	override async findById(id: number): Promise<Era | null> {
+		const [era] = await this.db<Era[]>`
       SELECT e.id, p.name AS actor, e.start_year, e.end_year
       FROM eras e
       JOIN people p ON p.id = e.actor_id

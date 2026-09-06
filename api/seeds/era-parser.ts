@@ -1,4 +1,4 @@
-import { type EraRow } from "@/types/eras.schema.js";
+import { type Era } from "@/types/eras.schema.js";
 
 import { ordinalWordToNumber } from "./constants.js";
 
@@ -22,8 +22,8 @@ export function extractActor(text: string): string | null {
 	return actor !== undefined ? actor : null;
 }
 
-export function parseEras(wikitext: string): EraRow[] {
-	const eras: EraRow[] = [];
+export function parseEras(wikitext: string): Era[] {
+	const eras: Era[] = [];
 	const sections = wikitext.split(/(?=^== .+ Doctor.* ==)/m);
 
 	for (const section of sections) {

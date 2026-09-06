@@ -1,9 +1,11 @@
 <script setup lang="ts">
-import type { EraRow } from "@/types/eras.schema.js";
+import type { Era } from "@/types/eras.schema.js";
 import { capitalize } from "vue";
 
+import { ordinalWord } from "~/utils/numbers.ts";
+
 defineProps<{
-	era: EraRow;
+	era: Era;
 }>();
 </script>
 

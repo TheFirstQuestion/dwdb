@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import type { SeasonRow } from "@/types/seasons.schema.js";
+import type { Season } from "@/types/seasons.schema.js";
 
 defineProps<{
-	season: SeasonRow;
+	season: Season;
 }>();
 </script>
 

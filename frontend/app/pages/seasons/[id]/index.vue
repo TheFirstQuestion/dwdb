@@ -2,17 +2,20 @@
 import BasicLoading from "~/components/basic/BasicLoading.vue";
 import EpisodeCard from "./EpisodeCard.vue";
 import BasicAlert from "~/components/basic/BasicAlert.vue";
+import { getEpisodes } from "~/api/episodes-api.ts";
+import { getSeason } from "~/api/seasons-api.ts";
+import { useRouteId } from "~/utils/route.ts";
 
-const route = useRoute();
-const seasonId = Number(route.params.id);
+const seasonId = useRouteId();
 
-const { data, status, error } = await useAsyncData(
+const { data, status, error } = await useLazyAsyncData(
 	`season-${seasonId}`,
 	async () => {
 		const [season, episodesResponse] = await Promise.all([
-			apiClient.getSeason(seasonId),
-			apiClient.getEpisodes({ seasonId, perPage: 100 }),
+			getSeason(seasonId),
+			getEpisodes({ season_id: seasonId, perPage: 100 }),
 		]);
+
 		return { season, episodes: episodesResponse.data };
 	}
 );
@@ -21,7 +24,7 @@ const { data, status, error } = await useAsyncData(
 <template>
 	<div class="mx-auto max-w-3xl p-6">
 		<PageHeader
-			v-if="data"
+			v-if="data?.season"
 			:to="`/eras/${data.season.era_id}`"
 			label="Back to Era"
 		/>
@@ -30,7 +33,7 @@ const { data, status, error } = await useAsyncData(
 
 		<BasicAlert :error="error" :title="'Failed to load Season'" />
 
-		<div v-if="data != null">
+		<div v-if="data?.season != null">
 			<PageTitle :title="data.season.name">
 				<p class="text-muted text-sm">{{ data.season.year }}</p>
 			</PageTitle>
