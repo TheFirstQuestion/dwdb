@@ -30,3 +30,6 @@ export const era = Type.Object({
 	),
 });
 export type Era = Static<typeof era>;
+
+export const eraList = Type.Array(era);
+export type EraList = Static<typeof eraList>;

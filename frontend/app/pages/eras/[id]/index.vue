@@ -3,7 +3,7 @@ import { capitalize } from "vue";
 import SeasonCard from "./SeasonTableItem.vue";
 import { getEra } from "~/api/eras-api.ts";
 import { getSeasons } from "~/api/seasons-api.ts";
-import { ordinalWord } from "~/utils/numbers.ts";
+import { ordinalWord } from "#utils/numbers.js";
 import { useRouteId } from "~/utils/route.ts";
 
 const eraId = useRouteId();

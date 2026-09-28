@@ -2,11 +2,12 @@ import type { FastifyPluginAsyncTypebox } from "@fastify/type-provider-typebox";
 
 import {
 	season,
+	type SeasonFilter,
 	seasonIdParam,
 	SeasonQuerystring,
 } from "@/types/seasons.schema.js";
 
-import { errorMessage } from "../../basic/BasicSchemas.js";
+import { ErrorMessage, errorResponses } from "../../basic/ErrorMessage.js";
 import { Paginated, resolvePagination } from "../../basic/Pagination.js";
 import { SeasonRepository } from "./season.repository.js";
 import { SeasonService } from "./season.service.js";
@@ -26,7 +27,13 @@ const seasonsRoutes: FastifyPluginAsyncTypebox = async (fastify) => {
 		},
 		async (request) => {
 			const { pageNum, perPage, era_id } = request.query;
-			return service.getAll(resolvePagination({ pageNum, perPage }), era_id);
+
+			const filters: SeasonFilter[] = [];
+			if (era_id !== undefined) {
+				filters.push({ column: "era_id", value: era_id });
+			}
+
+			return service.getAll(resolvePagination({ pageNum, perPage }), filters);
 		}
 	);
 
@@ -39,14 +46,15 @@ const seasonsRoutes: FastifyPluginAsyncTypebox = async (fastify) => {
 				params: seasonIdParam,
 				response: {
 					200: season,
-					404: errorMessage,
+					...errorResponses,
 				},
 			},
 		},
 		async (request, reply) => {
-			const season = await service.getById(request.params.id);
-			if (!season) return reply.code(404).send({ error: "Season not found" });
-			return season;
+			const result = await service.getById(request.params.id);
+			if (result instanceof ErrorMessage)
+				return reply.code(result.code).send(result);
+			return result;
 		}
 	);
 };

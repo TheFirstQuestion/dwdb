@@ -14,8 +14,9 @@
     "baseUrl": ".",
     "paths": {
       "@/types/*": ["types/*"],
-      "@/api/*": ["api/src/*"]
+      "@/api/*": ["api/src/*"],
+      "@/utils/*": ["utils/*"]
     }
   },
-  "include": ["api/src", "api/seeds", "scripts", "tests", "types"]
+  "include": ["api/src", "api/seeds", "scripts", "tests", "types", "utils"]
 }

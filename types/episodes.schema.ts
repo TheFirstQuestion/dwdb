@@ -55,3 +55,8 @@ export const EpisodeQuerystring = Type.Composite([
 	}),
 ]);
 export type EpisodeQuerystringParams = Static<typeof EpisodeQuerystring>;
+
+export type EpisodeFilter = {
+	column: "era_id" | "season_id";
+	value: number;
+};

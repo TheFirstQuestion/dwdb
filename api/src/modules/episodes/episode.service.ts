@@ -1,3 +1,5 @@
+import { type EpisodeFilter } from "@/types/episodes.schema.js";
+
 import { BaseService } from "../../basic/BaseService.js";
 import {
 	paginationOffset,
@@ -7,17 +9,14 @@ import {
 import type { EpisodeRepository } from "./episode.repository.js";
 
 export class EpisodeService extends BaseService<EpisodeRepository> {
-	async getAll(
-		pagination: PaginationParams,
-		eraId?: number,
-		seasonId?: number
-	) {
-		const { rows, total } = await this.repo.findAllPaginated({
-			eraId,
-			seasonId,
-			limit: pagination.perPage,
-			offset: paginationOffset(pagination),
-		});
+	async getAll(pagination: PaginationParams, filters: EpisodeFilter[]) {
+		const { rows, total } = await this.repo.findAllWithFiltersPaginated(
+			filters,
+			{
+				limit: pagination.perPage,
+				offset: paginationOffset(pagination),
+			}
+		);
 		return toPaginatedResult(rows, total, pagination);
 	}
 

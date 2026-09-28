@@ -4,7 +4,7 @@ import EpisodeBackLink from "./EpisodeBackLink.vue";
 import { getEpisode } from "~/api/episodes-api.ts";
 import { getEra } from "~/api/eras-api.ts";
 import { getSeason } from "~/api/seasons-api.ts";
-import { ordinalWord } from "~/utils/numbers.ts";
+import { ordinalWord } from "#utils/numbers.js";
 import { useRouteId } from "~/utils/route.ts";
 
 const episodeId = useRouteId();
@@ -16,7 +16,9 @@ const { data, status, error } = await useLazyAsyncData(
 
 		const [era, season] = await Promise.all([
 			getEra(episode.era_id),
-			getSeason(episode.season_id),
+			episode.season_id !== undefined
+				? getSeason(episode.season_id)
+				: undefined,
 		]);
 		return { episode, era, season };
 	}

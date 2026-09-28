@@ -2,11 +2,12 @@ import type { FastifyPluginAsyncTypebox } from "@fastify/type-provider-typebox";
 
 import {
 	episode,
+	type EpisodeFilter,
 	episodeIdParam,
 	EpisodeQuerystring,
 } from "@/types/episodes.schema.js";
 
-import { errorMessage } from "../../basic/BasicSchemas.js";
+import { ErrorMessage, errorResponses } from "../../basic/ErrorMessage.js";
 import { Paginated, resolvePagination } from "../../basic/Pagination.js";
 import { EpisodeRepository } from "./episode.repository.js";
 import { EpisodeService } from "./episode.service.js";
@@ -26,11 +27,16 @@ const episodesRoutes: FastifyPluginAsyncTypebox = async (fastify) => {
 		},
 		async (request) => {
 			const { pageNum, perPage, era_id, season_id } = request.query;
-			return service.getAll(
-				resolvePagination({ pageNum, perPage }),
-				era_id,
-				season_id
-			);
+
+			const filters: EpisodeFilter[] = [];
+			if (era_id !== undefined) {
+				filters.push({ column: "era_id", value: era_id });
+			}
+			if (season_id !== undefined) {
+				filters.push({ column: "season_id", value: season_id });
+			}
+
+			return service.getAll(resolvePagination({ pageNum, perPage }), filters);
 		}
 	);
 
@@ -43,14 +49,16 @@ const episodesRoutes: FastifyPluginAsyncTypebox = async (fastify) => {
 				params: episodeIdParam,
 				response: {
 					200: episode,
-					404: errorMessage,
+					...errorResponses,
 				},
 			},
 		},
 		async (request, reply) => {
-			const episode = await service.getById(request.params.id);
-			if (!episode) return reply.code(404).send({ error: "Episode not found" });
-			return episode;
+			const result = await service.getById(request.params.id);
+			if (result instanceof ErrorMessage) {
+				return reply.code(result.code).send(result);
+			}
+			return result;
 		}
 	);
 };

@@ -1,4 +1,5 @@
-import { ordinalWordToNumber } from "./constants.js";
+import { ordinalWordToNumber } from "@/utils/numbers.js";
+
 import { parseSeasonHeading } from "./season-parser.js";
 
 export interface ParsedStoryPart {

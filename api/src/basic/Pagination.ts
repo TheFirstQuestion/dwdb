@@ -8,12 +8,12 @@ import {
 	perPageSchema,
 } from "@/types/util/pagination.schema.js";
 
-// Resolved values used by services/repositories once defaults are applied.
 export interface PaginationParams {
 	pageNum: number;
 	perPage: number;
 }
 
+// Resolved values used by services/repositories once defaults are applied.
 export function resolvePagination(query: PaginationQuery): PaginationParams {
 	return {
 		pageNum: query.pageNum ?? DEFAULT_PAGE_NUM,
@@ -41,6 +41,12 @@ export interface PaginatedResult<T> extends PaginationParams {
 export interface RowsWithTotal<T> {
 	rows: T[];
 	total: number;
+}
+
+// Resolved limit/offset passed down to a repository query.
+export interface PaginationOffset {
+	limit: number;
+	offset: number;
 }
 
 export function paginationOffset(pagination: PaginationParams): number {
