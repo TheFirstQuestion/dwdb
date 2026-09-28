@@ -1,4 +1,4 @@
-import { ordinalWordToNumber } from "./constants.js";
+import { ordinalWordToNumber } from "@/utils/numbers.js";
 
 export interface SeasonData {
 	eraId: number;

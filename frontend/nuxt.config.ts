@@ -32,9 +32,21 @@ export default defineNuxtConfig({
 	// `import type { SeasonRow }`). This has no runtime effect on the frontend
 	// bundle — `import type` is erased, so Pagination.ts is never actually
 	// bundled client-side.
+	//
+	// "#utils" mirrors root tsconfig.json's "@/utils/*" -> "utils/*": plain
+	// (non-schema) helpers shared between the API and frontend, e.g. the
+	// ordinal-word conversion used by both the wiki-data parsers and the UI.
+	// Deliberately spelled "#utils" rather than "@/utils" like the two aliases
+	// above: those are only ever consumed via `import type` (erased before
+	// bundling), but this one is a real runtime import, and Nuxt's built-in
+	// "@" -> srcDir alias also matches any "@/..." specifier and — since
+	// frontend/app/utils/ already exists — wins the resolution race over a
+	// same-prefixed custom alias, silently resolving to the wrong directory.
+	// "#utils" sidesteps that because it doesn't share the "@"/"~" prefix.
 	alias: {
 		"@/types": fileURLToPath(new URL("../types", import.meta.url)),
 		"@/api": fileURLToPath(new URL("../api/src", import.meta.url)),
+		"#utils": fileURLToPath(new URL("../utils", import.meta.url)),
 	},
 
 	// Nuxt's dev server defaults to port 3000, which collides with the API's

@@ -1,4 +1,4 @@
-import type { ErrorMessage } from "@/api/basic/BasicSchemas.js";
+import type { ErrorMessage } from "@/api/basic/ErrorMessage.js";
 
 // Mirrors the JSON shape returned by the API's `Paginated()` TypeBox envelope
 // (api/src/basic/Pagination.ts) for every list endpoint. This is a plain

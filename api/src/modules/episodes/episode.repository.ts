@@ -1,27 +1,51 @@
 import type postgres from "postgres";
 
-import { type Episode } from "@/types/episodes.schema.js";
+import { type Episode, type EpisodeFilter } from "@/types/episodes.schema.js";
 
 import { BaseRepository } from "../../basic/BaseRepository.js";
+import { ErrorMessage } from "../../basic/ErrorMessage.js";
+import type {
+	PaginationOffset,
+	RowsWithTotal,
+} from "../../basic/Pagination.js";
 
 export class EpisodeRepository extends BaseRepository<Episode> {
 	constructor(db: postgres.Sql) {
 		super(db, "episodes");
 	}
 
-	override async findAllPaginated(options: {
-		limit: number;
-		offset: number;
-		eraId?: number;
-		seasonId?: number;
-	}): Promise<{ rows: Episode[]; total: number }> {
-		const { eraId, seasonId, limit, offset } = options;
+	async findAllByEraIdPaginated(
+		eraId: number,
+		options: PaginationOffset
+	): Promise<RowsWithTotal<Episode>> {
+		return this.findAllWithFiltersPaginated(
+			[{ column: "era_id", value: eraId }],
+			options
+		);
+	}
 
-		const filters = [];
-		if (eraId !== undefined) filters.push(this.db`era_id = ${eraId}`);
-		if (seasonId !== undefined) filters.push(this.db`season_id = ${seasonId}`);
-		const where = filters.length
-			? this.db`WHERE ${filters.reduce((acc, f) => this.db`${acc} AND ${f}`)}`
+	async findAllBySeasonIdPaginated(
+		seasonId: number,
+		options: PaginationOffset
+	): Promise<RowsWithTotal<Episode>> {
+		return this.findAllWithFiltersPaginated(
+			[{ column: "season_id", value: seasonId }],
+			options
+		);
+	}
+
+	async findAllWithFiltersPaginated(
+		filters: EpisodeFilter[],
+		options: PaginationOffset
+	): Promise<RowsWithTotal<Episode>> {
+		const { limit, offset } = options;
+
+		const conditions = filters.map(
+			(filter) => this.db`${this.db(filter.column)} = ${filter.value}`
+		);
+		const where = conditions.length
+			? this
+					.db`WHERE ${conditions.reduce((acc, c) => this.db`${acc} AND ${c}`)}`
 			: this.db``;
 
 		const rows = await this.db<Episode[]>`
@@ -42,13 +66,16 @@ export class EpisodeRepository extends BaseRepository<Episode> {
 		return { rows, total: Number(count) };
 	}
 
-	override async findById(id: number): Promise<Episode | null> {
+	override async findById(id: number): Promise<Episode | ErrorMessage> {
 		const [episode] = await this.db<Episode[]>`
       SELECT id, story_id, era_id, season_id, title,
              air_date::text AS air_date, part_number
       FROM episodes
       WHERE id = ${id}
     `;
-		return episode ?? null;
+		if (episode === undefined) {
+			return new ErrorMessage(`No episode found with id='${id}'`, 404);
+		}
+		return episode;
 	}
 }

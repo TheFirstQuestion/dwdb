@@ -1,6 +1,7 @@
 import type postgres from "postgres";
 
-import type { RowsWithTotal } from "./Pagination.js";
+import { ErrorMessage } from "./ErrorMessage.js";
+import type { PaginationOffset, RowsWithTotal } from "./Pagination.js";
 
 export abstract class BaseRepository<TRow extends object> {
 	constructor(
@@ -12,17 +13,22 @@ export abstract class BaseRepository<TRow extends object> {
 		return this.db<TRow[]>`SELECT * FROM ${this.db(this.table)}`;
 	}
 
-	async findById(id: number): Promise<TRow | null> {
+	async findById(id: number): Promise<TRow | ErrorMessage> {
 		const [row] = await this.db<TRow[]>`
       SELECT * FROM ${this.db(this.table)} WHERE id = ${id}
     `;
-		return row ?? null;
+		if (row !== undefined) {
+			return row;
+		}
+		return new ErrorMessage(
+			`No row found in ${this.table} with id='${id}'`,
+			404
+		);
 	}
 
-	async findAllPaginated(options: {
-		limit: number;
-		offset: number;
-	}): Promise<RowsWithTotal<TRow>> {
+	async findAllPaginated(
+		options: PaginationOffset
+	): Promise<RowsWithTotal<TRow>> {
 		const { limit, offset } = options;
 		const rows = await this.db<TRow[]>`
       SELECT * FROM ${this.db(this.table)}

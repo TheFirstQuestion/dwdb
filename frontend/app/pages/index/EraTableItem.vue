@@ -2,7 +2,7 @@
 import type { Era } from "@/types/eras.schema.js";
 import { capitalize } from "vue";
 
-import { ordinalWord } from "~/utils/numbers.ts";
+import { ordinalWord } from "#utils/numbers.js";
 
 defineProps<{
 	era: Era;

@@ -36,3 +36,8 @@ export const SeasonQuerystring = Type.Composite([
 	}),
 ]);
 export type SeasonQuerystringParams = Static<typeof SeasonQuerystring>;
+
+export type SeasonFilter = {
+	column: "era_id";
+	value: number;
+};

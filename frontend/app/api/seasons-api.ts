@@ -5,10 +5,7 @@ import type {
 
 import { type Paginated, request } from "../utils/api-request";
 
-export const getSeasons = (filters?: SeasonQuerystringParams) =>
-	filters == null
-		? undefined
-		: request<Paginated<Season>>("/seasons", { query: filters });
+export const getSeasons = (filters: SeasonQuerystringParams) =>
+	request<Paginated<Season>>("/seasons", { query: filters });
 
-export const getSeason = (id?: number) =>
-	id == null ? undefined : request<Season>(`/seasons/${id}`);
+export const getSeason = (id: number) => request<Season>(`/seasons/${id}`);

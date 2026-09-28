@@ -1,9 +1,8 @@
 import type { FastifyPluginAsyncTypebox } from "@fastify/type-provider-typebox";
-import { Type } from "@sinclair/typebox";
 
-import { era, eraIdParam } from "@/types/eras.schema.js";
+import { era, eraIdParam, eraList } from "@/types/eras.schema.js";
 
-import { errorMessage } from "../../basic/BasicSchemas.js";
+import { ErrorMessage, errorResponses } from "../../basic/ErrorMessage.js";
 import { EraRepository } from "./era.repository.js";
 import { EraService } from "./era.service.js";
 
@@ -16,7 +15,7 @@ const erasRoutes: FastifyPluginAsyncTypebox = async (fastify) => {
 			schema: {
 				tags: ["eras"],
 				description: "List all Doctor eras",
-				response: { 200: Type.Array(era) },
+				response: { 200: eraList },
 			},
 		},
 		async () => {
@@ -33,14 +32,16 @@ const erasRoutes: FastifyPluginAsyncTypebox = async (fastify) => {
 				params: eraIdParam,
 				response: {
 					200: era,
-					404: errorMessage,
+					...errorResponses,
 				},
 			},
 		},
 		async (request, reply) => {
-			const era = await service.getById(request.params.id);
-			if (!era) return reply.code(404).send({ error: "Era not found" });
-			return era;
+			const result = await service.getById(request.params.id);
+			if (result instanceof ErrorMessage) {
+				return reply.code(result.code).send(result);
+			}
+			return result;
 		}
 	);
 };
