@@ -6,8 +6,6 @@ import { getEpisodes } from "~/api/episodes-api.ts";
 import { getEra } from "~/api/eras-api.ts";
 import { useRouteId } from "~/utils/route.ts";
 
-import EpisodeCard from "./EpisodeCard.vue";
-
 const eraId = useRouteId();
 
 const { data, status, error } = await useLazyAsyncData(
@@ -24,7 +22,7 @@ const { data, status, error } = await useLazyAsyncData(
 
 <template>
 	<div class="mx-auto max-w-3xl p-6">
-		<PageHeader to="/" label="Back to Doctors" />
+		<PageHeader v-if="data" :era="data.era" />
 
 		<BasicLoading :status="status" message="Loading era..." />
 

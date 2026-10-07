@@ -1,11 +1,10 @@
 <script setup lang="ts">
 import { getEpisodes } from "~/api/episodes-api.ts";
+import { getEra } from "~/api/eras-api.ts";
 import { getSeason } from "~/api/seasons-api.ts";
 import BasicAlert from "~/components/basic/BasicAlert.vue";
 import BasicLoading from "~/components/basic/BasicLoading.vue";
 import { useRouteId } from "~/utils/route.ts";
-
-import EpisodeCard from "./EpisodeCard.vue";
 
 const seasonId = useRouteId();
 
@@ -16,19 +15,16 @@ const { data, status, error } = await useLazyAsyncData(
 			getSeason(seasonId),
 			getEpisodes({ season_id: seasonId, perPage: 100 }),
 		]);
+		const era = await getEra(season.era_id);
 
-		return { season, episodes: episodesResponse.data };
+		return { era, season, episodes: episodesResponse.data };
 	}
 );
 </script>
 
 <template>
 	<div class="mx-auto max-w-3xl p-6">
-		<PageHeader
-			v-if="data?.season"
-			:to="`/eras/${data.season.era_id}`"
-			label="Back to Era"
-		/>
+		<PageHeader v-if="data" :era="data.era" :season="data.season" />
 
 		<BasicLoading :message="'Loading seasons...'" :status="status" />
 
