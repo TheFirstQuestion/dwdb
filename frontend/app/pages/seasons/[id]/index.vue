@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import BasicLoading from "~/components/basic/BasicLoading.vue";
-import EpisodeCard from "./EpisodeCard.vue";
-import BasicAlert from "~/components/basic/BasicAlert.vue";
 import { getEpisodes } from "~/api/episodes-api.ts";
 import { getSeason } from "~/api/seasons-api.ts";
+import BasicAlert from "~/components/basic/BasicAlert.vue";
+import BasicLoading from "~/components/basic/BasicLoading.vue";
 import { useRouteId } from "~/utils/route.ts";
+
+import EpisodeCard from "./EpisodeCard.vue";
 
 const seasonId = useRouteId();
 
@@ -37,8 +38,6 @@ const { data, status, error } = await useLazyAsyncData(
 			<PageTitle :title="data.season.name">
 				<p class="text-muted text-sm">{{ data.season.year }}</p>
 			</PageTitle>
-
-			<h2 class="text-xl font-semibold mb-4">Episodes</h2>
 
 			<PageGrid
 				:items="data.episodes"

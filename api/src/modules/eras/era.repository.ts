@@ -19,6 +19,18 @@ export class EraRepository extends BaseRepository<Era> {
     `;
 	}
 
+	async findByActorName(name: string): Promise<Era[]> {
+		// Escape LIKE wildcards so user input is matched literally
+		const escaped = name.replace(/[\\%_]/g, "\\$&");
+		return this.db<Era[]>`
+      SELECT e.id, p.name AS actor, e.start_year, e.end_year
+      FROM eras e
+      JOIN people p ON p.id = e.actor_id
+      WHERE p.name ILIKE ${`%${escaped}%`}
+      ORDER BY e.id
+    `;
+	}
+
 	override async findById(id: number): Promise<Era | ErrorMessage> {
 		const [era] = await this.db<Era[]>`
       SELECT e.id, p.name AS actor, e.start_year, e.end_year

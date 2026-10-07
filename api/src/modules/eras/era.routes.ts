@@ -1,6 +1,11 @@
 import type { FastifyPluginAsyncTypebox } from "@fastify/type-provider-typebox";
 
-import { era, eraIdParam, eraList } from "@/types/eras.schema.js";
+import {
+	era,
+	eraIdParam,
+	eraList,
+	eraSearchQuery,
+} from "@/types/eras.schema.js";
 
 import { ErrorMessage, errorResponses } from "../../basic/ErrorMessage.js";
 import { EraRepository } from "./era.repository.js";
@@ -14,7 +19,7 @@ const erasRoutes: FastifyPluginAsyncTypebox = async (fastify) => {
 		{
 			schema: {
 				tags: ["eras"],
-				description: "List all Doctor eras",
+				summary: "List all Doctor eras",
 				response: { 200: eraList },
 			},
 		},
@@ -24,11 +29,28 @@ const erasRoutes: FastifyPluginAsyncTypebox = async (fastify) => {
 	);
 
 	fastify.get(
+		"/eras/search",
+		{
+			schema: {
+				tags: ["eras"],
+				summary: "Search eras by actor name",
+				description:
+					"Accepts 'First Last', 'First', or 'Last'. Returns every matching era (e.g. 'Tennant' matches both eras 10 and 14).",
+				querystring: eraSearchQuery,
+				response: { 200: eraList },
+			},
+		},
+		async (request) => {
+			return service.searchByActorName(request.query.name);
+		}
+	);
+
+	fastify.get(
 		"/eras/:id",
 		{
 			schema: {
 				tags: ["eras"],
-				description: "Get a single era by Doctor number",
+				summary: "Get a single era by Doctor number",
 				params: eraIdParam,
 				response: {
 					200: era,

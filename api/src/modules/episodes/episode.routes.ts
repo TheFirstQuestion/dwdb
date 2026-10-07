@@ -20,7 +20,7 @@ const episodesRoutes: FastifyPluginAsyncTypebox = async (fastify) => {
 		{
 			schema: {
 				tags: ["episodes"],
-				description: "List all episodes, optionally filtered by era or season",
+				summary: "List all episodes, optionally filtered by era or season",
 				querystring: EpisodeQuerystring,
 				response: { 200: Paginated(episode) },
 			},
@@ -45,7 +45,7 @@ const episodesRoutes: FastifyPluginAsyncTypebox = async (fastify) => {
 		{
 			schema: {
 				tags: ["episodes"],
-				description: "Get a single episode by ID",
+				summary: "Get a single episode by ID",
 				params: episodeIdParam,
 				response: {
 					200: episode,

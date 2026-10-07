@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import { capitalize } from "vue";
-import EpisodeBackLink from "./EpisodeBackLink.vue";
+
+import { ordinalWord } from "#utils/numbers.js";
 import { getEpisode } from "~/api/episodes-api.ts";
 import { getEra } from "~/api/eras-api.ts";
 import { getSeason } from "~/api/seasons-api.ts";
-import { ordinalWord } from "#utils/numbers.js";
 import { useRouteId } from "~/utils/route.ts";
+
+import EpisodeBackLink from "./EpisodeBackLink.vue";
 
 const episodeId = useRouteId();
 
@@ -42,7 +44,10 @@ const { data, status, error } = await useLazyAsyncData(
 				<p class="text-muted text-sm">
 					{{ data.episode.air_date ?? "Air date unknown" }}
 				</p>
-				<p v-if="data.episode.part_number !== null" class="text-muted text-sm">
+				<p
+					v-if="data.episode.part_number !== undefined"
+					class="text-muted text-sm"
+				>
 					Part {{ data.episode.part_number }}
 				</p>
 			</PageTitle>

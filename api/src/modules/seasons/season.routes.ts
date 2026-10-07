@@ -20,7 +20,7 @@ const seasonsRoutes: FastifyPluginAsyncTypebox = async (fastify) => {
 		{
 			schema: {
 				tags: ["seasons"],
-				description: "List all seasons, optionally filtered by Doctor era",
+				summary: "List all seasons, optionally filtered by Doctor era",
 				querystring: SeasonQuerystring,
 				response: { 200: Paginated(season) },
 			},
@@ -29,7 +29,7 @@ const seasonsRoutes: FastifyPluginAsyncTypebox = async (fastify) => {
 			const { pageNum, perPage, era_id } = request.query;
 
 			const filters: SeasonFilter[] = [];
-			if (era_id !== undefined) {
+			if (era_id != null) {
 				filters.push({ column: "era_id", value: era_id });
 			}
 
@@ -42,7 +42,7 @@ const seasonsRoutes: FastifyPluginAsyncTypebox = async (fastify) => {
 		{
 			schema: {
 				tags: ["seasons"],
-				description: "Get a single season by ID",
+				summary: "Get a single season by ID",
 				params: seasonIdParam,
 				response: {
 					200: season,
