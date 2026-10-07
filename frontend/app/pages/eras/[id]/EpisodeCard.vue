@@ -1,9 +1,12 @@
 <script setup lang="ts">
-import type { Episode } from "@/types/episodes.schema.js";
+import type { Episode } from "@/types/episodes.schema";
+import { parseDate } from "#utils/dates.ts";
 
-defineProps<{
+const props = defineProps<{
 	episode: Episode;
 }>();
+
+const airDate = parseDate(props.episode.air_date);
 </script>
 
 <template>
@@ -13,11 +16,8 @@ defineProps<{
 				<div class="flex items-center justify-between gap-2">
 					<h3 class="font-semibold">{{ episode.title }}</h3>
 
-					<h4
-						v-if="episode.part_number != null"
-						class="text-muted text-sm shrink-0"
-					>
-						Part {{ episode.part_number }}
+					<h4 v-if="airDate" class="text-muted text-sm shrink-0">
+						{{ airDate?.getUTCFullYear() }}
 					</h4>
 				</div>
 			</template>

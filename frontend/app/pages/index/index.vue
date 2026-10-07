@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import EraTableItem from "./EraTableItem.vue";
 import { getEras } from "~/api/eras-api.ts";
+
+import EraTableItem from "./EraTableItem.vue";
 
 const {
 	data: eras,

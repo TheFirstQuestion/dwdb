@@ -24,8 +24,11 @@ export const episode = Type.Object({
 	id: episodeIdSchema,
 	story_id: storyIdSchema,
 	era_id: eraIdSchema,
-	// Absent for specials
-	season_id: Type.Optional(seasonIdSchema),
+	season_id: Type.Optional({
+		...seasonIdSchema,
+		description:
+			"Auto-incremented season ID this episode belongs to; absent for specials",
+	}),
 	// TODO: reword
 	title: Type.String({
 		description: "Story title (classic episodes share the story title)",
@@ -34,14 +37,14 @@ export const episode = Type.Object({
 	air_date: Type.Optional(
 		Type.String({
 			format: "date",
-			description: "Original air date (YYYY-MM-DD)",
+			description:
+				"Original air date (YYYY-MM-DD); omitted for future or unknown",
 		})
 	),
-	// TODO: why null? one-parter is vacuously 1
 	part_number: Type.Optional(
 		Type.Integer({
 			minimum: 1,
-			description: "Part number within the story (classic multi-part)",
+			description: "Part number within the story; absent for standalone",
 		})
 	),
 });

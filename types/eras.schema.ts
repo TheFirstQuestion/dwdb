@@ -2,8 +2,8 @@ import { type Static, Type } from "@sinclair/typebox";
 
 export const eraIdSchema = Type.Integer({
 	minimum: 1,
-	description:
-		"Canonical Doctor number (e.g. 1=Hartnell, 10=Tennant, 14=Tennant)",
+	description: "Canonical Doctor number (1=Hartnell, 10=Tennant, 14=Tennant)",
+	examples: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
 });
 
 export const eraIdParam = Type.Object({
@@ -33,3 +33,13 @@ export type Era = Static<typeof era>;
 
 export const eraList = Type.Array(era);
 export type EraList = Static<typeof eraList>;
+
+export const eraSearchQuery = Type.Object({
+	name: Type.String({
+		minLength: 1,
+		description:
+			"Case-insensitive match against the actor's name; accepts 'First Last', 'First', or 'Last'",
+		examples: ["Tennant", "David", "David Tennant"],
+	}),
+});
+export type EraSearchQuery = Static<typeof eraSearchQuery>;

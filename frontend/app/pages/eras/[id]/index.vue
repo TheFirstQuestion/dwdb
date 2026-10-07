@@ -1,21 +1,23 @@
 <script setup lang="ts">
 import { capitalize } from "vue";
-import SeasonCard from "./SeasonTableItem.vue";
-import { getEra } from "~/api/eras-api.ts";
-import { getSeasons } from "~/api/seasons-api.ts";
+
 import { ordinalWord } from "#utils/numbers.js";
+import { getEpisodes } from "~/api/episodes-api.ts";
+import { getEra } from "~/api/eras-api.ts";
 import { useRouteId } from "~/utils/route.ts";
+
+import EpisodeCard from "./EpisodeCard.vue";
 
 const eraId = useRouteId();
 
 const { data, status, error } = await useLazyAsyncData(
 	`era-${eraId}`,
 	async () => {
-		const [era, seasonsResponse] = await Promise.all([
+		const [era, episodesResponse] = await Promise.all([
 			getEra(eraId),
-			getSeasons({ era_id: eraId }),
+			getEpisodes({ era_id: eraId, perPage: 100 }),
 		]);
-		return { era, seasons: seasonsResponse?.data };
+		return { era, episodes: episodesResponse?.data };
 	}
 );
 </script>
@@ -32,21 +34,19 @@ const { data, status, error } = await useLazyAsyncData(
 			<PageTitle :title="`The ${capitalize(ordinalWord(data.era.id))} Doctor`">
 				<p class="text-lg">{{ data.era.actor }}</p>
 				<p class="text-muted text-sm">
-					{{ data.era.start_year }}&ndash;{{ data.era.end_year ?? "present" }}
+					{{ data.era.start_year }} - {{ data.era.end_year ?? "present" }}
 				</p>
 			</PageTitle>
 
-			<h2 class="text-xl font-semibold mb-4">Seasons</h2>
-
 			<PageGrid
-				v-if="data.seasons"
-				:items="data.seasons"
+				v-if="data.episodes"
+				:items="data.episodes"
 				:grid-cols="1"
 				:sm-grid-cols="1"
-				empty-message="No seasons found for this era."
+				empty-message="No episodes found for this era."
 			>
-				<template #item="{ item: season }">
-					<SeasonCard :season="season" />
+				<template #item="{ item: episode }">
+					<EpisodeCard :episode="episode" />
 				</template>
 			</PageGrid>
 		</div>

@@ -1,28 +1,11 @@
-import prettier from 'eslint-config-prettier'
-import simpleImportSort from 'eslint-plugin-simple-import-sort'
+import prettier from "eslint-config-prettier";
 import tseslint from "typescript-eslint";
 
+import { sharedConfig } from "./eslint.shared.js";
 
 export default tseslint.config(
-  { ignores: ['dist/', 'node_modules/'] },
-  tseslint.configs.recommended,
-  {
-    plugins: {
-      'simple-import-sort': simpleImportSort,
-    },
-    rules: {
-      '@typescript-eslint/no-non-null-assertion': 'error',
-      '@typescript-eslint/no-explicit-any': 'error',
-      '@typescript-eslint/no-unused-vars': 'error',
-      'simple-import-sort/imports': 'error',
-      'simple-import-sort/exports': 'error',
-      'no-console': 'warn',
-      'no-debugger': 'error',
-      'prefer-const': 'error',
-      'no-var': 'error',
-      'eqeqeq': 'error',
-      'curly': 'error',
-    },
-  },
-  prettier,
-)
+	{ ignores: ["dist/", "node_modules/"] },
+	tseslint.configs.recommended,
+	sharedConfig,
+	prettier
+);

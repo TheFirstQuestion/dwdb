@@ -20,7 +20,8 @@ export const season = Type.Object({
 		description: "Season number within its era type (Classic or Modern)",
 	}),
 	name: Type.String({
-		description: "Display name, e.g. 'Season 1' or 'Series 13 (Flux)'",
+		description: "Display name",
+		examples: ["Season 1", "Series 13 (Flux)"],
 	}),
 	year: Type.Integer({
 		minimum: 1963,

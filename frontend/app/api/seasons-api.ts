@@ -1,6 +1,6 @@
 import type {
-	SeasonQuerystringParams,
 	Season,
+	SeasonQuerystringParams,
 } from "@/types/seasons.schema.js";
 
 import { type Paginated, request } from "../utils/api-request";

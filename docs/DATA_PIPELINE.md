@@ -48,7 +48,7 @@ Some wikitable rows also share one column's value across several consecutive row
 
 - If `story.parts` is set (lettered two-parter), each part becomes one episode row with its own title/air date.
 - Else if `episodeCount > 1` (classic multi-part), synthesize `episodeCount` rows sharing the story title; only part 1 carries the air date.
-- Otherwise, one row using the story's own title/air date/part number.
+- Otherwise, one row using the story's own title/air date. Part number is null for standalone episodes.
 
 ## Seed scripts (`api/seeds/seed-NN-*.ts`)
 
