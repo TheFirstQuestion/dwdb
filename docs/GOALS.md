@@ -79,6 +79,4 @@ Quick To Do Dump:
 - color scheme for frontend
 - bigger font sizes
 - syntax highlighting, autoformatting for frontend
-- Doctor pages should show specials, in air date order w seasons
 - use the frontend to fix data issues
-- frontend should use same config as whole project
