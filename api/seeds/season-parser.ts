@@ -1,29 +1,24 @@
 import { ordinalWordToNumber } from "@/utils/numbers.js";
 
-export interface SeasonData {
-	eraId: number;
-	number: number;
-	name: string;
-	year: number;
-}
+import type { SeasonData, SeasonHeading } from "./season-parser.types.js";
 
 export function parseSeasonHeading(
 	wikilink: string
-): { number: number; name: string } | null {
+): SeasonHeading | undefined {
 	const inner = wikilink.slice(2, -2);
 	const pipeIdx = inner.indexOf("|");
 	const rawName = pipeIdx >= 0 ? inner.slice(pipeIdx + 1) : inner;
 	const name = rawName.replace(/''([^']+)''/g, "$1").trim();
 
 	const numMatch = name.match(/(?:Season|Series)\s+(\d+)/i);
-	if (!numMatch) return null;
+	if (!numMatch) return undefined;
 
 	const num = numMatch[1];
-	if (!num) return null;
+	if (!num) return undefined;
 	return { number: parseInt(num), name };
 }
 
-export function extractFirstYear(text: string): number | null {
+export function extractFirstYear(text: string): number | undefined {
 	// Search only within the episode table to avoid picking up years referenced
 	// in intro prose (e.g. "the second time since [[2005]]...")
 	const tableStart = text.indexOf("{|");
@@ -38,20 +33,20 @@ export function extractFirstYear(text: string): number | null {
 	if (linked && bare) {
 		const linkedYear = linked[1];
 		const bareYear = bare[1];
-		if (!linkedYear || !bareYear) return null;
+		if (!linkedYear || !bareYear) return undefined;
 		return linked.index < bare.index
 			? parseInt(linkedYear)
 			: parseInt(bareYear);
 	}
 	if (linked) {
 		const year = linked[1];
-		return year !== undefined ? parseInt(year) : null;
+		return year !== undefined ? parseInt(year) : undefined;
 	}
 	if (bare) {
 		const year = bare[1];
-		return year !== undefined ? parseInt(year) : null;
+		return year !== undefined ? parseInt(year) : undefined;
 	}
-	return null;
+	return undefined;
 }
 
 export function parseSeasons(wikitext: string): SeasonData[] {

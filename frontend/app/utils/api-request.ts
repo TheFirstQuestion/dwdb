@@ -16,7 +16,7 @@ export class ApiError extends Error {
 	constructor(
 		message: string,
 		public readonly status: number,
-		public readonly body: ErrorMessage | null
+		public readonly body?: ErrorMessage
 	) {
 		super(message);
 		this.name = "ApiError";
@@ -44,7 +44,7 @@ export async function request<T>(
 	} catch (error) {
 		if (isFetchError(error)) {
 			const status = error.status ?? 0;
-			const body = (error.data ?? null) as ErrorMessage | null;
+			const body = error.data as ErrorMessage | undefined;
 			throw new ApiError(
 				body?.error ?? `Request to ${path} failed with status ${status}`,
 				status,

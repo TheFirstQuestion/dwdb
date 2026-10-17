@@ -74,9 +74,11 @@ Concrete areas known to be out of scope for now but intended eventually:
 
 **Longer-term:** the items in [Future scope](#future-scope) above, roughly in the order listed.
 
-Quick To Do Dump:
+Quick To Do Dump (the working backlog lives in [GitHub Issues](https://github.com/TheFirstQuestion/dwdb/issues) — check there first):
 
 - color scheme for frontend
 - bigger font sizes
 - syntax highlighting, autoformatting for frontend
 - use the frontend to fix data issues
+- adopt conventional commits
+- Revisit TypeScript strictness rules and ESLint config

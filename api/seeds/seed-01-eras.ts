@@ -65,7 +65,7 @@ async function main() {
 
 				await tx`
           INSERT INTO eras (id, actor_id, start_year, end_year)
-          VALUES (${era.id}, ${personId}, ${era.start_year}, ${era.end_year})
+          VALUES (${era.id}, ${personId}, ${era.start_year}, ${era.end_year ?? null})
           ON CONFLICT (id) DO UPDATE
             SET actor_id = EXCLUDED.actor_id,
                 start_year = EXCLUDED.start_year,

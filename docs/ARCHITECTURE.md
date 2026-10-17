@@ -2,7 +2,7 @@
 
 Describes the current structure of the repo — what runs, how the pieces fit together. See [GOALS.md](GOALS.md) for why this exists, and [DATA_PIPELINE.md](DATA_PIPELINE.md) for how wiki source data becomes seeded rows (a separate, offline concern from what's described here).
 
-> This is a living document: it should be updated in the same change that alters module structure, `api/src/basic/`, or `api/src/plugins/` — not left to drift from the code it describes.
+> This is a living document: it should be updated in the same change that alters module structure, `api/src/basic/`, `api/src/plugins/`, or migrations — not left to drift from the code it describes.
 
 This document describes the codebase **as it exists today**: the Fastify app lives under `api/`, with shared TypeBox schemas centralized in `types/` at the repo root so both the API and the `frontend/` package can import the same schema types. A Nuxt 4 frontend lives alongside it under `frontend/` — see the "Frontend (`frontend/`)" section below.
 
@@ -50,6 +50,10 @@ TypeBox schemas for every module live in `types/<module>.schema.ts` at the repo 
 
 `types/pagination.schema.ts` holds the shared request-side pagination pieces (`paginationQuery`, `pageNumSchema`, `perPageSchema`, and their defaults) that both the module querystring schemas (via `Type.Composite([paginationQuery, ...])`) and `api/src/basic/Pagination.ts` depend on. This keeps the dependency direction one-way — `api/src/` depends on `types/`, never the reverse — so `types/` stays genuinely importable by a future frontend without pulling in API internals.
 
+**Absent values.** Schemas model a nullable DB column as an *optional* property (e.g. `end_year: Type.Optional(Type.Integer(...))`, absent for an ongoing era), never as `T | null`. This works end to end because of the `nullToUndefined` transform in `api/src/plugins/db.ts`: without it, postgres.js would return `null` and Fastify's response serializer would coerce it against a non-nullable type into a bogus zero value (`0`, `""`) instead of omitting the key. The frontend relies on this and handles absence with `??` (e.g. `end_year ?? "present"`), and `ApiError.body` is likewise optional rather than nullable. Seed scripts convert the other way (`?? null`) at the insert boundary, since postgres.js rejects `undefined` parameters — see [DATA_PIPELINE.md](DATA_PIPELINE.md).
+
+**Schema changes.** Column names in `types/*.schema.ts` mirror the table columns, so a migration that renames or adds a column on a table the API reads (e.g. `stories.story_number`, renamed from `wiki_number`) must be matched here and in the repository's explicit `SELECT` lists. Migrations live in `api/migrations/` and the seed/parser side of a schema change is covered in [DATA_PIPELINE.md](DATA_PIPELINE.md).
+
 ## Frontend (`frontend/`)
 
 A Nuxt 4 + Vue 3 + NuxtUI single-page app. Routes are file-based under
@@ -78,7 +82,7 @@ same schema files as the API, without duplicating type definitions.
 Registered once in `api/src/index.ts`, before any routes:
 
 - **`cors.ts`** — registers `@fastify/cors`, allowing local dev origins (`http://localhost:3000`, `http://localhost:3001`) so the Nuxt frontend (`frontend/`) can fetch the API in dev without a CORS error. Registered first, before `db`/`swagger`. Local-dev-only for now; a production frontend origin (e.g. GitHub Pages) still needs to be added once one exists.
-- **`db.ts`** — creates the `postgres.Sql` client from `DATABASE_URL`, decorates `fastify.db` so every module's routes can construct a repository, and closes the connection on server shutdown (`onClose` hook).
+- **`db.ts`** — creates the `postgres.Sql` client from `DATABASE_URL`, decorates `fastify.db` so every module's routes can construct a repository, and closes the connection on server shutdown (`onClose` hook). The client is configured with a `transform.value.from` hook (`nullToUndefined`) that turns SQL `NULL` into `undefined` for every query, so nullable columns reach the response serializer as absent keys — see "Absent values" under "Shared schemas (`types/`)".
 - **`swagger.ts`** — registers `@fastify/swagger` (OpenAPI generation from the TypeBox schemas modules already define) and `@fastify/swagger-ui` at `/docs`.
 
 ## Current module inventory
