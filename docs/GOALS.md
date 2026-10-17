@@ -80,3 +80,4 @@ Quick To Do Dump:
 - bigger font sizes
 - syntax highlighting, autoformatting for frontend
 - use the frontend to fix data issues
+- adopt conventional commits, and revisit TypeScript strictness rules and ESLint config, plus a manual read-through of the code

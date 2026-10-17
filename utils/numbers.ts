@@ -65,7 +65,7 @@ const TENS_PREFIX: Record<string, number> = {
 	ninety: 90,
 };
 
-export function ordinalWordToNumber(word: string): number | null {
+export function ordinalWordToNumber(word: string): number | undefined {
 	const lower = word.toLowerCase();
 	if (ORDINALS[lower] !== undefined) {
 		return ORDINALS[lower];
@@ -73,14 +73,14 @@ export function ordinalWordToNumber(word: string): number | null {
 
 	const dash = lower.indexOf("-");
 	if (dash < 0) {
-		return null;
+		return undefined;
 	}
 
 	const tens = TENS_PREFIX[lower.slice(0, dash)];
 	const ones = ORDINALS[lower.slice(dash + 1)];
 
 	if (tens === undefined || ones === undefined || ones > 9) {
-		return null;
+		return undefined;
 	}
 
 	return tens + ones;

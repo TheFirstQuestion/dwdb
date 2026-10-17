@@ -46,8 +46,8 @@ describe("extractActor", () => {
 		).toBe("Jodie Whittaker");
 	});
 
-	it("returns null when no actor present", () => {
-		expect(extractActor("no actor here")).toBeNull();
+	it("returns undefined when no actor present", () => {
+		expect(extractActor("no actor here")).toBeUndefined();
 	});
 });
 

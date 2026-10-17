@@ -20,6 +20,13 @@ These are crucial context — read them before making anything more than a minor
 ## Rules
 
 - No TypeScript non-null assertions (`!`). Throw an explicit error or handle the missing value properly.
+- Don't use Claude's auto-memory for this project. Write durable guidance (rules, preferences, conventions) into files in the repo — this `CLAUDE.md` or `docs/` — so it's versioned and visible to everyone.
+- Write tests (vitest) to verify a fix or change, not ad-hoc `npx tsx` one-liners — the test stays in the codebase as a regression guard.
+- If the user had to ask how something works or why a design choice was made, put that explanation in a code or doc comment at the relevant place, not only in chat.
+- When executing a plan, skip creating a separate git worktree (still work on a feature branch, never `main`) unless the user asks for one.
+- If the code-review-graph looks stale or returns nothing for symbols that clearly exist, rebuild it (`build_or_update_graph_tool` with `full_rebuild: true`) and retry rather than falling back to `find`/`grep`.
+- Run `nvm use` from the repo root (it reads `.nvmrc`) before any `pnpm`/`node` command; the default shell Node is too old for pnpm.
+- Model absent values as optional properties (`airDate?: string`), never as `string | null` (`airDate: string | null`).
 - All TypeBox schemas (params, body, response, 404s) live in `types/` as one file per domain concept (e.g. `types/eras.schema.ts`) and are imported into routes/services/repos via the `@/types/*` alias — no inline `Type.Object({...})` in route handlers, and no schema definitions inside `api/src/modules/*/`.
 - Future-proof: never hardcode finite lists of domain entities that will grow as the show continues (e.g. a fixed map of Doctor names). Derive values algorithmically instead.
 - Before committing: code must type-check cleanly (`pnpm build`), lint cleanly (`pnpm lint`), be formatted (`pnpm format`), and all tests must pass (`pnpm test`).

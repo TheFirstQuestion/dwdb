@@ -49,13 +49,23 @@ async function main() {
 
 			for (const story of stories) {
 				const seasonId = story.seasonName
-					? (seasonByName.get(story.seasonName) ?? null)
-					: null;
+					? seasonByName.get(story.seasonName)
+					: undefined;
 
-				const storyRows = await tx<{ id: number }[]>`
-          INSERT INTO stories (title, era_id, season_id, wiki_number)
-          VALUES (${story.title}, ${story.eraId}, ${seasonId}, ${story.wikiNumber})
-          ON CONFLICT (wiki_number) DO UPDATE
+				// Number-less stories are identified by (title, era_id) via the partial unique index; numbered ones by story_number.
+				const storyRows =
+					story.storyNumber === undefined
+						? await tx<{ id: number }[]>`
+          INSERT INTO stories (title, era_id, season_id, story_number)
+          VALUES (${story.title}, ${story.eraId}, ${seasonId ?? null}, NULL)
+          ON CONFLICT (title, era_id) WHERE story_number IS NULL DO UPDATE
+            SET season_id  = EXCLUDED.season_id
+          RETURNING id
+        `
+						: await tx<{ id: number }[]>`
+          INSERT INTO stories (title, era_id, season_id, story_number)
+          VALUES (${story.title}, ${story.eraId}, ${seasonId ?? null}, ${story.storyNumber})
+          ON CONFLICT (story_number) DO UPDATE
             SET title      = EXCLUDED.title,
                 era_id     = EXCLUDED.era_id,
                 season_id  = EXCLUDED.season_id
@@ -72,8 +82,8 @@ async function main() {
 					await tx`
             INSERT INTO episodes (story_id, era_id, season_id, title, air_date, part_number)
             VALUES (
-              ${storyId}, ${story.eraId}, ${seasonId}, ${row.title},
-              ${row.airDate}, ${row.partNumber}
+              ${storyId}, ${story.eraId}, ${seasonId ?? null}, ${row.title},
+              ${row.airDate ?? null}, ${row.partNumber ?? null}
             )
           `;
 					episodeCount++;

@@ -49,7 +49,7 @@ describe("request", () => {
 		await expect(rejection).resolves.toMatchObject({
 			message: "Request to /eras/1 failed with status 500",
 			status: 500,
-			body: null,
+			body: undefined,
 		});
 	});
 
