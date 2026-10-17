@@ -19,14 +19,11 @@ export const era = Type.Object({
 		minimum: 1963,
 		description: "Year this era began",
 	}),
-	end_year: Type.Union(
-		[
-			Type.Integer({ minimum: 1963, description: "Year this era ended" }),
-			Type.Null({ description: "Indicates era is ongoing" }),
-		],
-		{
-			description: "Year this era ended, or null if ongoing",
-		}
+	end_year: Type.Optional(
+		Type.Integer({
+			minimum: 1963,
+			description: "Year this era ended; absent if ongoing",
+		})
 	),
 });
 export type Era = Static<typeof era>;

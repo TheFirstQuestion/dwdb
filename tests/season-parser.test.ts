@@ -36,12 +36,12 @@ describe("parseSeasonHeading", () => {
 		).toEqual({ number: 13, name: "Series 13 (Flux)" });
 	});
 
-	it("returns null for specials with no season number", () => {
+	it("returns undefined for specials with no season number", () => {
 		expect(
 			parseSeasonHeading(
 				"[[Series 4 (Doctor Who)#2008-10 Specials|2008-10 specials]]"
 			)
-		).toBeNull();
+		).toBeUndefined();
 	});
 });
 
@@ -78,8 +78,8 @@ describe("extractFirstYear", () => {
 		).toBe(1989);
 	});
 
-	it("returns null when no year present", () => {
-		expect(extractFirstYear("no years here")).toBeNull();
+	it("returns undefined when no year present", () => {
+		expect(extractFirstYear("no years here")).toBeUndefined();
 	});
 });
 

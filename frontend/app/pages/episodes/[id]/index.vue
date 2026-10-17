@@ -7,8 +7,6 @@ import { getEra } from "~/api/eras-api.ts";
 import { getSeason } from "~/api/seasons-api.ts";
 import { useRouteId } from "~/utils/route.ts";
 
-import EpisodeBackLink from "./EpisodeBackLink.vue";
-
 const episodeId = useRouteId();
 
 const { data, status, error } = await useLazyAsyncData(
@@ -29,10 +27,11 @@ const { data, status, error } = await useLazyAsyncData(
 
 <template>
 	<div class="mx-auto max-w-3xl p-6">
-		<EpisodeBackLink
+		<PageHeader
 			v-if="data"
-			:episode="data.episode"
+			:era="data.era"
 			:season="data.season"
+			:episode="data.episode"
 		/>
 
 		<BasicLoading :status="status" message="Loading episode..." />

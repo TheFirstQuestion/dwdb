@@ -4,9 +4,12 @@ import {
 	buildEpisodeRows,
 	extractAirDate,
 	extractEpisodeCount,
+	extractNumberLessEpisodeCount,
+	extractPageTitle,
 	extractPartNumber,
 	extractTitle,
 	NON_MERGING_STORY_GROUPS,
+	NUMBER_LESS_STORY_ALLOWLIST,
 	type ParsedStory,
 	parseRawStories,
 	parseStories,
@@ -70,8 +73,8 @@ describe("extractPartNumber", () => {
 		).toBe(2);
 	});
 
-	it("returns null when no Part marker", () => {
-		expect(extractPartNumber("''[[Rose (TV story)|Rose]]''")).toBeNull();
+	it("returns undefined when no Part marker", () => {
+		expect(extractPartNumber("''[[Rose (TV story)|Rose]]''")).toBeUndefined();
 	});
 });
 
@@ -120,8 +123,203 @@ describe("extractAirDate", () => {
 		);
 	});
 
-	it("returns null when no date present", () => {
-		expect(extractAirDate("no date here")).toBeNull();
+	it("returns undefined when no date present", () => {
+		expect(extractAirDate("no date here")).toBeUndefined();
+	});
+});
+
+describe("extractPageTitle", () => {
+	it("returns the link target of a piped TV story link, not the display text", () => {
+		expect(
+			extractPageTitle(
+				"''[[An Unearthly Child (TV story)|An Unearthly Child]]''"
+			)
+		).toBe("An Unearthly Child (TV story)");
+	});
+
+	it("uses the target when display text differs from it", () => {
+		expect(extractPageTitle("''[[Untitled (1986 TV story)|Untitled]]''")).toBe(
+			"Untitled (1986 TV story)"
+		);
+	});
+
+	it("handles reversed italic nesting", () => {
+		expect(
+			extractPageTitle(
+				"[[The Robot Revolution (TV story)|''The Robot Revolution'']]"
+			)
+		).toBe("The Robot Revolution (TV story)");
+	});
+
+	it("captures webcast-style targets", () => {
+		expect(extractPageTitle("''[[Shada (webcast)|Shada]]''")).toBe(
+			"Shada (webcast)"
+		);
+	});
+
+	it("captures a bare (unpiped) link", () => {
+		expect(extractPageTitle("''[[Tardisode 1]]''")).toBe("Tardisode 1");
+	});
+
+	it("drops a section anchor", () => {
+		expect(
+			extractPageTitle("''[[Some Story (TV story)#Plot|Some Story]]''")
+		).toBe("Some Story (TV story)");
+	});
+
+	it("ignores links inside templates, refs, and small tags", () => {
+		expect(
+			extractPageTitle(
+				"''[[Joy to the World (TV story)|Joy to the World]]'' {{sm|([[Christmas special]])}}<ref>[[Other]]</ref>"
+			)
+		).toBe("Joy to the World (TV story)");
+	});
+
+	it("returns undefined when the cell has no link", () => {
+		expect(extractPageTitle("''Plain Title''")).toBeUndefined();
+	});
+});
+
+describe("extractNumberLessEpisodeCount", () => {
+	it.each([
+		["3 minutes", 1],
+		["1 minute, 20 seconds", 1],
+		["4 minutes each", 1],
+		["2.5 minutes", 1],
+		["3x16 seconds", 1],
+		["2 hours", 1],
+		["1", 1],
+		["13", 13],
+		["6<br>(incomplete)", 6],
+	])("%s -> %i", (cell, expected) => {
+		expect(extractNumberLessEpisodeCount(cell)).toBe(expected);
+	});
+});
+
+describe("number-less stories", () => {
+	const header =
+		'{|\n|-\n! scope="col" | Story\n! scope="col" | Title\n! scope="col" | Episodes\n! scope="col" | Original airdates\n';
+	const bornAgain = `|-
+! scope="row" |-
+|''[[Born Again (TV story)|Born Again]]''
+|7 minutes
+|[[18 November (releases)|18 November]] [[2005 (releases)|2005]]
+`;
+	const tardisode = `|-
+! scope="row" |-
+|''[[Tardisode 1]]''
+|42 seconds
+|[[1 April (releases)|1 April]] [[2006 (releases)|2006]]
+`;
+	const smithAndJones = `|-
+! scope="row" |179
+|1
+|''[[Smith and Jones (TV story)|Smith and Jones]]''
+|[[31 March (releases)|31 March]] [[2007 (releases)|2007]]
+`;
+	const table = `== Tenth Doctor ==
+=== Mini-episodes ===
+${header}${bornAgain}${tardisode}${bornAgain}${smithAndJones}|}
+`;
+	const allowlist = new Set(["Born Again (TV story)"]);
+
+	it("drops number-less rows when the allowlist is empty", () => {
+		const stories = parseStories(table, new Set());
+		expect(stories.map((s) => s.title)).toEqual(["Smith and Jones"]);
+	});
+
+	it("keeps only allowlisted number-less rows, de-duplicated by (title, eraId)", () => {
+		const stories = parseStories(table, allowlist);
+		expect(stories.map((s) => s.title)).toEqual([
+			"Born Again",
+			"Smith and Jones",
+		]);
+		expect(stories[0]?.storyNumber).toBeUndefined();
+		expect(stories[0]?.seasonName).toBeUndefined();
+		expect(stories[0]).toMatchObject({
+			eraId: 10,
+			episodeCount: 1,
+			airDate: "2005-11-18",
+			pageTitle: "Born Again (TV story)",
+		});
+	});
+
+	it("records pageTitle on numbered rows", () => {
+		const stories = parseStories(table, allowlist);
+		expect(stories[1]?.pageTitle).toBe("Smith and Jones (TV story)");
+	});
+
+	it("records pageTitle on each part of a merged lettered story", () => {
+		const lettered = `== Tenth Doctor ==
+${header}|-
+! scope="row" |100a
+|1
+|''[[Part A (TV story)|Part A]]''
+|[[1 March (releases)|1 March]] [[2007 (releases)|2007]]
+|-
+! scope="row" |100b
+|1
+|''[[Part B (TV story)|Part B]]''
+|[[2 March (releases)|2 March]] [[2007 (releases)|2007]]
+|}
+`;
+		const [merged] = parseStories(lettered, new Set());
+		expect(merged?.parts?.map((p) => p.pageTitle)).toEqual([
+			"Part A (TV story)",
+			"Part B (TV story)",
+		]);
+	});
+
+	it("does not letter-merge across a number-less row", () => {
+		const lettered = `== Tenth Doctor ==
+${header}|-
+! scope="row" |100a
+|1
+|''[[Part A (TV story)|Part A]]''
+|[[1 March (releases)|1 March]] [[2007 (releases)|2007]]
+${bornAgain}|-
+! scope="row" |100b
+|1
+|''[[Part B (TV story)|Part B]]''
+|[[2 March (releases)|2 March]] [[2007 (releases)|2007]]
+|}
+`;
+		const stories = parseStories(lettered, allowlist);
+		expect(stories.map((s) => s.storyNumber)).toEqual([
+			"100a",
+			undefined,
+			"100b",
+		]);
+	});
+
+	describe("against the real list page", () => {
+		const everyNumberLessTarget = new Set(
+			parseRawStories(wikitext, "all").flatMap((s) =>
+				s.storyNumber === undefined && s.pageTitle ? [s.pageTitle] : []
+			)
+		);
+
+		it("every allowlist entry matches a number-less row on the list page", () => {
+			for (const entry of NUMBER_LESS_STORY_ALLOWLIST) {
+				expect(everyNumberLessTarget.has(entry), entry).toBe(true);
+			}
+		});
+
+		it("seeded number-less stories equal the allowlist", () => {
+			const seeded = parseStories(wikitext).filter(
+				(s) => s.storyNumber === undefined
+			);
+			expect(new Set(seeded.map((s) => s.pageTitle))).toEqual(
+				new Set(NUMBER_LESS_STORY_ALLOWLIST)
+			);
+		});
+
+		it("no two number-less stories share (title, eraId)", () => {
+			const keys = parseStories(wikitext)
+				.filter((s) => s.storyNumber === undefined)
+				.map((s) => `${s.eraId}:${s.title}`);
+			expect(keys).toHaveLength(new Set(keys).size);
+		});
 	});
 });
 
@@ -157,13 +355,15 @@ describe("parseStories", () => {
 		});
 	});
 
-	it("assigns null seasonName to specials not in a Series section", () => {
+	it("leaves seasonName undefined for specials not in a Series section", () => {
 		const s = stories.find((s) => s.title === "Doctor Who");
-		expect(s).toMatchObject({ eraId: 8, seasonName: null });
+		expect(s).toMatchObject({ eraId: 8, seasonName: undefined });
 	});
 
-	it("has no duplicate wiki numbers", () => {
-		const nums = stories.map((s) => s.wikiNumber);
+	it("has no duplicate story numbers", () => {
+		const nums = stories
+			.map((s) => s.storyNumber)
+			.filter((n) => n !== undefined);
 		expect(nums).toHaveLength(new Set(nums).size);
 	});
 
@@ -185,8 +385,9 @@ describe("parseStories", () => {
 
 	// TODO: bad test
 	it("modern stories each have episodeCount of 1, except recognized multi-part stories", () => {
+		// Number-less animated serials (e.g. The Infinite Quest) have several episodes but no per-part rows; buildEpisodeRows synthesizes those.
 		const modernMultiEp = stories.filter(
-			(s) => s.eraId >= 9 && s.episodeCount > 1
+			(s) => s.eraId >= 9 && s.storyNumber !== undefined && s.episodeCount > 1
 		);
 		expect(modernMultiEp.every((s) => s.parts && s.parts.length > 1)).toBe(
 			true
@@ -194,7 +395,7 @@ describe("parseStories", () => {
 	});
 
 	it("merges lettered two-part story 311a/311b ('The Legend of Ruby Sunday'/'Empire of Death') into a single story with per-part titles", () => {
-		const merged = stories.find((s) => s.wikiNumber === "311");
+		const merged = stories.find((s) => s.storyNumber === "311");
 		expect(merged).toMatchObject({
 			title: "The Legend of Ruby Sunday",
 			episodeCount: 2,
@@ -204,29 +405,29 @@ describe("parseStories", () => {
 			],
 		});
 
-		expect(stories.find((s) => s.wikiNumber === "311a")).toBeUndefined();
-		expect(stories.find((s) => s.wikiNumber === "311b")).toBeUndefined();
+		expect(stories.find((s) => s.storyNumber === "311a")).toBeUndefined();
+		expect(stories.find((s) => s.storyNumber === "311b")).toBeUndefined();
 	});
 
 	it("merges lettered six-part story 297a-f (Flux) into one story with per-part titles", () => {
-		const merged = stories.find((s) => s.wikiNumber === "297");
+		const merged = stories.find((s) => s.storyNumber === "297");
 		expect(merged?.episodeCount).toBe(6);
 		expect(merged?.parts).toHaveLength(6);
 
 		for (const letter of ["a", "b", "c", "d", "e", "f"]) {
 			expect(
-				stories.find((s) => s.wikiNumber === `297${letter}`)
+				stories.find((s) => s.storyNumber === `297${letter}`)
 			).toBeUndefined();
 		}
 	});
 
 	it("does not merge The Trial of a Time Lord (143a-143d) — denylisted as four separate stories", () => {
-		expect(stories.find((s) => s.wikiNumber === "143")).toBeUndefined();
+		expect(stories.find((s) => s.storyNumber === "143")).toBeUndefined();
 
 		const parts = ["143a", "143b", "143c", "143d"];
 		const expectedEpisodeCounts = [4, 4, 4, 2];
-		parts.forEach((wikiNumber, i) => {
-			const s = stories.find((s) => s.wikiNumber === wikiNumber);
+		parts.forEach((storyNumber, i) => {
+			const s = stories.find((s) => s.storyNumber === storyNumber);
 			expect(s).toMatchObject({
 				episodeCount: expectedEpisodeCounts[i],
 			});
@@ -242,7 +443,7 @@ describe("parseStories", () => {
 
 		const classicBaseNumbers = new Set<string>();
 		for (const story of rawStories) {
-			const m = story.wikiNumber.match(/^(\d+)([a-z])$/);
+			const m = story.storyNumber?.match(/^(\d+)([a-z])$/);
 			if (m && story.isClassic) {
 				const base = m[1];
 				if (base) classicBaseNumbers.add(base);
@@ -262,51 +463,51 @@ describe("parseStories", () => {
 describe("buildEpisodeRows", () => {
 	it("builds a single row for a single-episode modern story", () => {
 		const rose: ParsedStory = {
-			wikiNumber: "162",
+			storyNumber: "162",
 			title: "Rose",
 			eraId: 9,
 			seasonName: "Series 1",
 			episodeCount: 1,
 			airDate: "2005-03-26",
-			partNumber: null,
 			isClassic: false,
 		};
 		expect(buildEpisodeRows(rose)).toEqual([
-			{ title: "Rose", airDate: "2005-03-26", partNumber: null },
+			{ title: "Rose", airDate: "2005-03-26" },
 		]);
 	});
 
 	it("synthesizes numbered parts sharing the story title for a classic multi-part story", () => {
 		const unearthlyChild: ParsedStory = {
-			wikiNumber: "1",
+			storyNumber: "1",
 			title: "An Unearthly Child",
 			eraId: 1,
 			seasonName: "Season 1",
 			episodeCount: 4,
 			airDate: "1963-11-23",
-			partNumber: null,
 			isClassic: true,
 		};
 		expect(buildEpisodeRows(unearthlyChild)).toEqual([
 			{ title: "An Unearthly Child", airDate: "1963-11-23", partNumber: 1 },
-			{ title: "An Unearthly Child", airDate: null, partNumber: 2 },
-			{ title: "An Unearthly Child", airDate: null, partNumber: 3 },
-			{ title: "An Unearthly Child", airDate: null, partNumber: 4 },
+			{ title: "An Unearthly Child", airDate: undefined, partNumber: 2 },
+			{ title: "An Unearthly Child", airDate: undefined, partNumber: 3 },
+			{ title: "An Unearthly Child", airDate: undefined, partNumber: 4 },
 		]);
 	});
 
 	it("uses each part's own title and air date for a merged lettered two-part story", () => {
 		const legendOfRubySunday: ParsedStory = {
-			wikiNumber: "311",
+			storyNumber: "311",
 			title: "The Legend of Ruby Sunday",
 			eraId: 15,
 			seasonName: "Series 14",
 			episodeCount: 2,
 			airDate: "2024-06-15",
-			partNumber: null,
 			isClassic: false,
 			parts: [
-				{ title: "The Legend of Ruby Sunday", airDate: "2024-06-15" },
+				{
+					title: "The Legend of Ruby Sunday",
+					airDate: "2024-06-15",
+				},
 				{ title: "Empire of Death", airDate: "2024-06-22" },
 			],
 		};

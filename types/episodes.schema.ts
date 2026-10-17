@@ -33,7 +33,6 @@ export const episode = Type.Object({
 	title: Type.String({
 		description: "Story title (classic episodes share the story title)",
 	}),
-	// TODO: why would an air date be undefined?
 	air_date: Type.Optional(
 		Type.String({
 			format: "date",
